@@ -105,7 +105,7 @@ public class ExpressionConsumer {
         if (lexemIterator.hasNext() && lexem.getType() == LexemType.OPEN_BRACE) {
             lexem = lexemIterator.hasNext() ? lexemIterator.next() : null;
             if (isNull(lexem) || lexem.getType() == LexemType.CLOSED_BRACE || lexem.getType() == LexemType
-                    .EOS || lexem.getType() == LexemType.EOL) {
+                    .EOF || lexem.getType() == LexemType.EOL) {
                 return lexem;
             }
             lexem = evaluate(lexem);
@@ -120,7 +120,7 @@ public class ExpressionConsumer {
     private Lexem evaluateValue(Lexem lexem) {
         if (!isNull(lexem)) {
             switch (lexem.getType()) {
-                case CHAR, BINARY, OCTAL, DECIMAL, HEXADECIMAL, IDENTIFIER -> {
+                case CHAR, BINARY, OCTAL, DECIMAL, HEXADECIMAL, IDENTIFIER, VARIABLE -> {
                     lexem = lexemIterator.hasNext() ? lexemIterator.next() : null;
                 }
                 default -> {

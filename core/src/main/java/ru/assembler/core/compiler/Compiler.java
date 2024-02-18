@@ -1,8 +1,15 @@
 package ru.assembler.core.compiler;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.HashSet;
+import java.util.Set;
+
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.io.IOUtils;
 import ru.assembler.core.compiler.command.nonparameterized.NonParametersCommandCompiler;
 import ru.assembler.core.compiler.command.parameterized.ParameterizedCommandCompiler;
 import ru.assembler.core.compiler.command.system.DbCommandCompiler;
@@ -11,8 +18,12 @@ import ru.assembler.core.compiler.command.system.DefCommandCompiler;
 import ru.assembler.core.compiler.command.system.DwCommandCompiler;
 import ru.assembler.core.compiler.command.system.EndCommandCompiler;
 import ru.assembler.core.compiler.command.system.EquCommandCompiler;
+import ru.assembler.core.compiler.command.system.ImageCommandCompiler;
 import ru.assembler.core.compiler.command.system.IncludeCommandCompiler;
 import ru.assembler.core.compiler.command.system.OrgCommandCompiler;
+import ru.assembler.core.compiler.command.system.PrintCommandCompiler;
+import ru.assembler.core.compiler.command.system.PrintlnCommandCompiler;
+import ru.assembler.core.compiler.command.system.ResourceCommandCompiler;
 import ru.assembler.core.compiler.command.system.UdefCommandCompiler;
 import ru.assembler.core.compiler.command.tree.CommandTree;
 import ru.assembler.core.compiler.option.Option;
@@ -21,6 +32,7 @@ import ru.assembler.core.error.CompilerException;
 import ru.assembler.core.error.text.MessageList;
 import ru.assembler.core.error.text.Output;
 import ru.assembler.core.lexem.Lexem;
+import ru.assembler.core.lexem.LexemAnalyzer;
 import ru.assembler.core.lexem.LexemType;
 import ru.assembler.core.ns.NamespaceApi;
 import ru.assembler.core.settings.SettingsApi;
@@ -38,11 +50,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import ru.assembler.core.util.RepeatableIteratorImpl;
+
 /**
  * @author Maxim Gorin
  */
 @Slf4j
 public class Compiler implements CompilerApi {
+
     private static final String TEMPLATE_NAME = "template";
 
     protected final NamespaceApi namespaceApi;
@@ -69,6 +84,8 @@ public class Compiler implements CompilerApi {
 
     private boolean stopped;
 
+    private final Set<File> includedSet = new HashSet<>();
+
     public Compiler(@NonNull NamespaceApi namespaceApi, @NonNull SettingsApi settingsApi
             , @NonNull SyntaxAnalyzer syntaxAnalyzer, @NonNull OutputStream os) {
         this.namespaceApi = namespaceApi;
@@ -80,12 +97,11 @@ public class Compiler implements CompilerApi {
     }
 
     private void initDefaultValues() {
-        namespaceApi.setAddress(Variables.getBigInteger(Variables.DEFAULT_ADDRESS
-                , BigInteger.valueOf(0x8000)));
     }
 
     private boolean processCommand(LexemSequence lexemSequence) throws IOException {
-        CommandCompiler compiler = commandCompilerMap.get(new LexemSequence(lexemSequence.first()));//embedded instruction
+        CommandCompiler compiler = commandCompilerMap.get(
+                new LexemSequence(lexemSequence.first()));//embedded instruction
         if (compiler == null) {
             compiler = commandCompilerTree.find(lexemSequence);//try to find by pattern from lexemSequence
             if (compiler == null) {
@@ -103,41 +119,43 @@ public class Compiler implements CompilerApi {
 
     private void processLabel(Lexem lexem) {
         if (namespaceApi.containsLabel(lexem.getValue())) {
-            throw new CompilerException(getFile(), lexem.getLineNumber(), MessageList.getMessage(MessageList
-                    .LABEL_IS_ALREADY_DEFINED), lexem.getValue());
+            throw new CompilerException(lexem.getFile(), lexem.getLineNumber(),
+                    MessageList.getMessage(MessageList
+                            .LABEL_IS_ALREADY_DEFINED), lexem.getValue());
         }
         namespaceApi.putLabel(lexem.getValue());
     }
 
+    private static void putCommandCompiler(final CommandCompiler cc, final Map<LexemSequence
+            , CommandCompiler> commandCompilerMap) {
+        for (String name : cc.names()) {
+            commandCompilerMap.put(new LexemSequence(name), cc);
+        }
+    }
+
     private void loadEmbeddedCommands(Map<LexemSequence, CommandCompiler> commandCompilerMap) {
-        commandCompilerMap.put(new LexemSequence(OrgCommandCompiler.NAME), new OrgCommandCompiler(namespaceApi
-                , settingsApi, this));
-        commandCompilerMap.put(new LexemSequence(DbCommandCompiler.NAME), new DbCommandCompiler(DbCommandCompiler.NAME
-                , namespaceApi, settingsApi, this));
-        commandCompilerMap.put(new LexemSequence(DbCommandCompiler.ALT_NAME), new DbCommandCompiler(DbCommandCompiler
-                .ALT_NAME, namespaceApi, settingsApi, this));
-        commandCompilerMap.put(new LexemSequence(DwCommandCompiler.NAME), new DwCommandCompiler(DwCommandCompiler.NAME
-                , namespaceApi, settingsApi, this));
-        commandCompilerMap.put(new LexemSequence(DwCommandCompiler.ALT_NAME), new DwCommandCompiler(DwCommandCompiler
-                .ALT_NAME, namespaceApi, settingsApi, this));
-        commandCompilerMap.put(new LexemSequence(DdwCommandCompiler.NAME), new DdwCommandCompiler(DdwCommandCompiler.NAME
-                , namespaceApi, settingsApi, this));
-        commandCompilerMap.put(new LexemSequence(DdwCommandCompiler.ALT_NAME), new DdwCommandCompiler(DdwCommandCompiler
-                .ALT_NAME, namespaceApi, settingsApi, this));
-        commandCompilerMap.put(new LexemSequence(IncludeCommandCompiler.NAME), new IncludeCommandCompiler(namespaceApi
-                , settingsApi, this));
-        commandCompilerMap.put(new LexemSequence(DefCommandCompiler.NAME), new DefCommandCompiler(DefCommandCompiler
-                .NAME, namespaceApi, this));
-        commandCompilerMap.put(new LexemSequence(DefCommandCompiler.ALT_NAME), new DefCommandCompiler(DefCommandCompiler
-                .ALT_NAME, namespaceApi, this));
-        commandCompilerMap.put(new LexemSequence(UdefCommandCompiler.NAME), new UdefCommandCompiler(UdefCommandCompiler
-                .NAME, namespaceApi, this));
-        commandCompilerMap.put(new LexemSequence(UdefCommandCompiler.ALT_NAME), new UdefCommandCompiler(UdefCommandCompiler
-                .ALT_NAME, namespaceApi, this));
-        commandCompilerMap.put(new LexemSequence(EndCommandCompiler.NAME), new EndCommandCompiler(namespaceApi
-                , this));
-        commandCompilerMap.put(new LexemSequence(EquCommandCompiler.NAME), new EquCommandCompiler(namespaceApi
-                , settingsApi, this));
+        putCommandCompiler(new OrgCommandCompiler(namespaceApi, settingsApi, this)
+                , commandCompilerMap);
+        putCommandCompiler(new DbCommandCompiler(namespaceApi, settingsApi, this)
+                , commandCompilerMap);
+        putCommandCompiler(new DwCommandCompiler(namespaceApi, settingsApi, this)
+                , commandCompilerMap);
+        putCommandCompiler(new DdwCommandCompiler(namespaceApi, settingsApi, this)
+                , commandCompilerMap);
+        putCommandCompiler(new IncludeCommandCompiler(namespaceApi, settingsApi, this)
+                , commandCompilerMap);
+        putCommandCompiler(new DefCommandCompiler(namespaceApi, this)
+                , commandCompilerMap);
+        putCommandCompiler(new UdefCommandCompiler(namespaceApi, this)
+                , commandCompilerMap);
+        putCommandCompiler(new EndCommandCompiler(namespaceApi, this)
+                , commandCompilerMap);
+        putCommandCompiler(new EquCommandCompiler(namespaceApi, settingsApi, this)
+                , commandCompilerMap);
+        putCommandCompiler(new ResourceCommandCompiler(this), commandCompilerMap);
+        putCommandCompiler(new ImageCommandCompiler(settingsApi, this), commandCompilerMap);
+        putCommandCompiler(new PrintCommandCompiler(namespaceApi, this), commandCompilerMap);
+        putCommandCompiler(new PrintlnCommandCompiler(namespaceApi, this), commandCompilerMap);
     }
 
     private void loadCustomCommands(CommandTree commandCompilerTree) throws IOException {
@@ -182,7 +200,8 @@ public class Compiler implements CompilerApi {
     @Override
     public void compile() throws IOException {
         loadCommandTables();
-        Output.println(MessageList.getMessage(MessageList.COMPILING) + " " + getFile().getAbsolutePath());
+        Output.println(
+                MessageList.getMessage(MessageList.COMPILING) + " " + getFile().getAbsolutePath());
         for (LexemSequence lexemSequence : syntaxAnalyzer) {
             Lexem lexem = lexemSequence.first();
             setLineNumber(lexem.getLineNumber());
@@ -190,8 +209,9 @@ public class Compiler implements CompilerApi {
                 processLabel(lexem);
             } else {
                 if (!processCommand(lexemSequence)) {
-                    throw new CompilerException(getFile(), lexemSequence.getLineNumber(), MessageList
-                            .getMessage(MessageList.UNKNOWN_COMMAND), lexemSequence.getCaption());
+                    throw new CompilerException(lexemSequence.getFile(), lexemSequence.getLineNumber(),
+                            MessageList
+                                    .getMessage(MessageList.UNKNOWN_COMMAND), lexemSequence.getCaption());
                 }
             }
             if (isStopped()) {
@@ -280,6 +300,28 @@ public class Compiler implements CompilerApi {
     @Override
     public boolean isStopped() {
         return stopped;
+    }
+
+    @Override
+    public boolean include(@NonNull String path) throws IOException {
+        final File file = new File(path);
+        if (!file.exists()) {
+            throw new FileNotFoundException(file.getAbsolutePath());
+        }
+        if (includedSet.contains(file)) {
+            return false;
+        }
+        includedSet.add(file);
+        byte[] data;
+        try (FileInputStream fis = new FileInputStream(file)) {
+            data = IOUtils.toByteArray(fis);
+        }
+        final LexemAnalyzer lexemAnalyzer = new LexemAnalyzer(file, new ByteArrayInputStream(data)
+                , settingsApi.getPlatformEncoding(), settingsApi.getSourceEncoding());
+        lexemAnalyzer.setTrimEof(false);
+        syntaxAnalyzer.append(new RepeatableIteratorImpl<>(lexemAnalyzer.iterator()));
+        addCompiledSourceCount(1);
+        return true;
     }
 
     public void setFile(@NonNull File file) {

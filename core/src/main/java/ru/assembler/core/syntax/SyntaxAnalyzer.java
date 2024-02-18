@@ -5,47 +5,52 @@ import lombok.NonNull;
 import ru.assembler.core.lexem.Lexem;
 import ru.assembler.core.lexem.LexemType;
 import ru.assembler.core.util.AnalyzerIterator;
+import ru.assembler.core.util.ConcatableIterator;
 import ru.assembler.core.util.RepeatableIterator;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 /**
  * @author Maxim Gorin
  */
 public class SyntaxAnalyzer implements Iterable<LexemSequence> {
-    private RepeatableIterator<Lexem> lexemIterator;
 
-    private LexemSequenceInternalIterator lexemSequenceInternalIterator;
+    private ConcatableIterator<Lexem> lexemIterator;
 
-    @Getter
-    private int lineCount;
+    private final LexemSequenceInternalIterator lexemSequenceInternalIterator = new LexemSequenceInternalIterator();
+
+    private final Map<File, Integer> fileLineMap = new HashMap<>();
 
     private SyntaxAnalyzer() {
 
     }
 
     public SyntaxAnalyzer(@NonNull RepeatableIterator<Lexem> lexemIterator) {
-        this.lexemIterator = lexemIterator;
+        this.lexemIterator = new ConcatableIterator<>(lexemIterator);
     }
 
-    private void processComment(Lexem lexem) {
+    protected void processComment(@NonNull Lexem lexem) {
         //do nothing
     }
 
-    private void processEOL(Lexem lexem) {
+    protected void processEOL(@NonNull Lexem lexem) {
         //do nothing
     }
 
-    private LexemSequence processSequence(Lexem lexem) {
-        List<Lexem> lexemList = new LinkedList<>();
+    protected void processEOF(@NonNull Lexem lexem) {
+        //do nothing
+    }
+
+    protected LexemSequence processSequence(Lexem lexem) {
+        final List<Lexem> lexemList = new LinkedList<>();
         lexemList.add(lexem);
         if (lexem.getType() != LexemType.LABEL) {
             while (lexemIterator.hasNext()) {
                 lexem = lexemIterator.next();
-                if (lexem.getType() == LexemType.EOL || lexem.getType() == LexemType.EOS ||
-                        lexem.getType() == LexemType.COMMENT) {
+                if (lexem.getType() == LexemType.EOL
+                        || lexem.getType() == LexemType.EOF
+                        || lexem.getType() == LexemType.COMMENT) {
                     break;
                 }
                 lexemList.add(lexem);
@@ -57,11 +62,10 @@ public class SyntaxAnalyzer implements Iterable<LexemSequence> {
     private LexemSequence getNext() {
         while (lexemIterator.hasNext()) {
             Lexem lexem = lexemIterator.next();
-            lineCount = Math.max(lineCount, lexem.getLineNumber());
-            if (lexem.getType() == LexemType.EOS) {
-                return null;
-            }
-            if (lexem.getType() == LexemType.COMMENT) {
+            putLineNumber(lexem);
+            if (lexem.getType() == LexemType.EOF) {
+                processEOF(lexem);
+            } else if (lexem.getType() == LexemType.COMMENT) {
                 processComment(lexem);
             } else {
                 if (lexem.getType() == LexemType.EOL) {
@@ -74,12 +78,31 @@ public class SyntaxAnalyzer implements Iterable<LexemSequence> {
         return null;
     }
 
+    private void putLineNumber(Lexem lexem) {
+        if (lexem.getFile() == null) {
+            return;
+        }
+        final Integer lineNumber = fileLineMap.get(lexem.getFile());
+        if (lineNumber == null || lexem.getLineNumber() > lineNumber) {
+            fileLineMap.put(lexem.getFile(), lexem.getLineNumber());
+        }
+    }
+
+    public int getLineCount() {
+        int count = 0;
+        for (Map.Entry<File, Integer> entry : fileLineMap.entrySet()) {
+            count += entry.getValue();
+        }
+        return count;
+    }
+
     @Override
     public Iterator<LexemSequence> iterator() {
-        if (lexemSequenceInternalIterator == null) {
-            lexemSequenceInternalIterator = new LexemSequenceInternalIterator();
-        }
         return lexemSequenceInternalIterator;
+    }
+
+    public void append(@NonNull RepeatableIterator<Lexem> lexemIterator) {
+        this.lexemIterator.concat(lexemIterator);
     }
 
     private class LexemSequenceInternalIterator extends AnalyzerIterator<LexemSequence> {

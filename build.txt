@@ -1,6 +1,8 @@
 1) cd ./core
 2) mvn install
-3) cd ../microsha
-4) mvn package
-5) cd ../zxspectrum
+3) cd ./zxcommons
+4) mvn install
+5) cd ../microsha
 6) mvn package
+7) cd ../zxspectrum
+8) mvn package

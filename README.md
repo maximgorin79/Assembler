@@ -1,49 +1,38 @@
-# Features:
-Supports commands:
------------include source files to be compiled-----------------------------
-.include "<filename>"
- include "<filename>"
------------define data: number, characters, strings as byte array----------
-.def <variable> <value>
- def <variable> <value>
-.define <variable> <value>
- define <variable> <value>
-.db <byte expr0>,<expr byte1>...<byte exprN>
- db <string0>,<string1>...<stringN>
-.defb <byte expr0>,<byte expr1>...<byte exprN>
- defb <string0>,<string0>...<stringN>
-.dw <word expr0>,<word expr1>...<word exprN>
-dw <word expr0>,<word expr1>...<word exprN>
-.defw <word expr0>,<word expr1>...<word exprN>
-defw <word expr0>,<word expr1>...<word exprN>
-.ddw <dword expr0>,<dword expr1>...<dword exprN>
-ddw <dword expr0>,<dword expr1>...<dword exprN>
-.defdw <dword expr0>,<dword expr1>...<dword exprN>
-defdw <dword expr0>,<dword expr1>...<dword exprN>
-end - force compiler to be stopped
+Features:
+1. Supports all z80 instructions including undocumented ones.
 
-saveWav <text1>...<textN> save compiled data into wave format (for zxspectrum)
-.saveWav <text1>...<textN> save compiled data into wave format (for zxspectrum)
-saveTap <text1>...<textN> save compiled data into <tap> format (for zxspectrum)
-.saveTap <text1>...<textN> save compiled data into <tap> format (for zxspectrum)
-saveTzx <text1>...<textN> save compiled data into <tzx> format (for zxspectrum)
-.saveTzx <text1>...<textN> save compiled data into <tzx> format (for zxspectrum)
+2. Supported commands:
+.include, include  "<filename>" - include the source (example: include "gfx.asm")
+.def, def, .define. define <identifier> <expr> - define number (example: define WIDTH 256)
+.db, db, .defb, defb <expr0>, <expr1>...<exprN> - defines bytes (1 byte), string, character (example: db 1, 2, 3, "Hello world!")
+.dw, dw, .defw, defw <word expr0>,<word expr1>...<word exprN> - defines bytes (1 byte), words (2 bytes)
+, characters (example: defw 255, 65534, fffh)
+.ddw, ddw, .dd, dd, .defdw, defdw  <expr0>, <expr1>...<exprN> - defines bytes (1 byte), words (2 bytes)
+, dwords (4 bytes), characters (example: dd 0x123456h, 100000)
+.end, end - force compiler to stop (example: end)
+.saveWav, saveWav <text1>...<textN> - saves compiled data into wave format (for zxspectrum and microsha, example: saveWav "out.wav")
+.saveTap, saveTap <text1>...<textN> - saves compiled data into <tap> format (for zxspectrum, example: savetap "out.tap")
+.saveTzx, saveTzx <text1>...<textN> - saves compiled data into <tzx> format (for zxspectrum, example: saveTzx "out.tzx")
+.saveRkm, saveRkm <text1>...<textN> - saves compiled data into <rkm> format (for microsha, example: saverkm "out.rkm")
+label: .equ, equ  <address> - defines address for a label (example: lab1: equ 123)
+defres, resource <path1>...<pathN> - inserts binary data from a file into compiled file (example: .resource "/home/user/data.txt")
+img, image <path1>...<pathN> - inserts a image data from a file into the compiled file,  (example: img "icon.ong")
+if it is nesessary, converts to monochrome format
+echo, print, message <text1>...<text1> - prints messages in console (example: .echo "Hello world!\n")
+println <text1>..<text2> - the same as previous, but it prints a new message with a new line (example: println "Hello world!")
 
-saveWav <text1>...<textN> save compiled data into wave format (for microsha)
-.saveWav <text1>...<textN> save compiled data into wave format (for microsha)
-saveRkm <text1>...<textN> save compiled data into <rkm> format (for microsha)
-.saveRkm <text1>...<textN> save compiled data into <rkm> format (for microsha)
+3. Number formats:
 
-label: .equ <address>
-label: equ <address>
+0[0..7]  - octal number (C-style) (example: 0234)
+[0..7][gG] - ocatl number (Old-style) (example: 123G)
+0x[0..F] - hexadecimal (C-style) (example: 0xFF)
+#[0..F]  - hexadecimal (example: #1c)
+$[0..F]  - hexadecimal (ZX-style) (example: $0C)
+[0..F][Hh]  - hexdecimal (Old-style) (example: 12h)
+0b[0..1] - binary (Java-style) (example: 0B11110000)
+[0..1][Bb]  - binary (Old-style) (example: 11101b)
+[0..9] - decimal (example: 12345)
 
+4. Variable:
 
-Supports number formats:
-00-9  - octal number (C-style)
-0x0-F - hexadecimal (C-style)
-#0-F  - hexadecimal
-$0-F  - hexadecimal (ZX-style)
-0-Fh  - hexdecimal (Old-style)
-0b0-1 - binary (Java-style)
-0-1b  - binary (Old-style)
-0-9   - decimal
+$var - compiler evaluates this variable
