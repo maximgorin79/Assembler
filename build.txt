@@ -6,3 +6,7 @@
 6) mvn package
 7) cd ../zxspectrum
 8) mvn package
+9) cd ./RSyntaxTextArea
+10) mvn install
+11) cd ../retroide
+12) mvn package
