@@ -1,4 +1,4 @@
-package ru.retro.assembler.editor.core.ui;
+package ru.retro.assembler.editor.core.control;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -10,6 +10,7 @@ import ru.retro.assembler.editor.core.i18n.Messages;
 import ru.retro.assembler.editor.core.io.Source;
 import ru.retro.assembler.editor.core.settings.AppSettings;
 import ru.retro.assembler.editor.core.settings.DefaultAppSettings;
+import ru.retro.assembler.editor.core.ui.*;
 import ru.retro.assembler.editor.core.ui.components.MenuItem;
 import ru.retro.assembler.editor.core.ui.components.ToolButton;
 import ru.retro.assembler.editor.core.ui.find.FindDialog;
@@ -240,20 +241,29 @@ public final class Controller implements Runnable {
     }
 
     //------------------------------------------------------------------------------------------------------------------
-    private void createBuildToolButtons() {
-        final Collection<ToolButton> buildToolButtons = toolButtonFactory.newToolButtons(this);
-        if (buildToolButtons != null) {
-            for (ToolButton button : buildToolButtons) {
+    private void createToolButtons() {
+        final Collection<ToolButton> toolButtons = toolButtonFactory.newToolButtons(this);
+        if (toolButtons != null) {
+            for (ToolButton button : toolButtons) {
                 mainWindow.getToolBarButtons().add(button);
             }
         }
     }
 
-    private void createMenuItems() {
-        final Collection<MenuItem> buildMenuItems = menuItemFactory.newMenuItems(this);
+    private void createBuildMenuItems() {
+        final Collection<MenuItem> buildMenuItems = menuItemFactory.newBuildMenuItems(this);
         if (buildMenuItems != null) {
             for (MenuItem menuItem : buildMenuItems) {
                 mainWindow.getBuildMenuItems().add(menuItem);
+            }
+        }
+    }
+
+    private void createRunMenuItems() {
+        final Collection<MenuItem> runMenuItems = menuItemFactory.newRunMenuItems(this);
+        if (runMenuItems != null) {
+            for (MenuItem menuItem : runMenuItems) {
+                mainWindow.getRunMenuItems().add(menuItem);
             }
         }
     }
@@ -266,8 +276,9 @@ public final class Controller implements Runnable {
 
     protected void initListeners() {
         createIcons();
-        createBuildToolButtons();
-        createMenuItems();
+        createToolButtons();
+        createBuildMenuItems();
+        createRunMenuItems();
         mainWindow.addWindowListener(windowAdapter);
         mainWindow.getHelpMenuItems().getMiHelp().addActionListener(helpListener);
         mainWindow.getHelpMenuItems().getMiAbout().addActionListener(aboutListener);
