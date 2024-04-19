@@ -7,7 +7,8 @@ import java.util.ResourceBundle;
  */
 
 public final class MicroshaMessages {
-    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.MicroshaMessages");
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("asm"
+        + ".i8080.i18n.MicroshaMessages");
 
     public static final String FILE_ENUM = "file_enum";
 
@@ -46,6 +47,12 @@ public final class MicroshaMessages {
     public static final String MIN_ADDRESS_GREATER_OR_EQUAL = "min_address_greater_or_equal";
 
     public static final String ADDRESS_IS_OUT_RANGE = "address_is_out_of_range";
+
+    public static final String CANT_CREATE_FILE = "cant_create_file";
+
+    public static final String SAVED_FILE_IN = "saved_file_in";
+
+    public static final String COMPILED_FILE_IN = "compiled_file_in";
 
     private MicroshaMessages() {
 
