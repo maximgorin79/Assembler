@@ -1,6 +1,8 @@
-package ru.retro.assembler.editor.core.ui.player;
+package ru.retro.assembler.editor.core.ui.media;
 
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +12,20 @@ import java.awt.*;
  * Date: 21.03.2024
  */
 public class InteractivePanel extends JPanel {
+    @Getter
+    @Setter
+    @NonNull
+    private Color bkColor = Color.BLACK;
+
+    @Getter
+    @Setter
+    @NonNull
+    private Color lineColor = Color.YELLOW;
+
+    @Getter
+    @Setter
+    @NonNull
+    private Color waveColor = Color.GREEN;
 
     private JPanel screenPanel;
 
@@ -22,15 +38,16 @@ public class InteractivePanel extends JPanel {
 
     private int len;
 
-    private int[] x = new int[1000];
+    private final int[] x = new int[1000];
 
-    private int[] y = new int[1000];
+    private final int[] y = new int[1000];
 
     public InteractivePanel() {
         initComponents();
     }
 
     private void initComponents() {
+        setBorder(BorderFactory.createLineBorder(Color.BLACK));
         setLayout(new GridBagLayout());
         screenPanel = new JPanel() {
             @Override
@@ -58,15 +75,13 @@ public class InteractivePanel extends JPanel {
     protected void paintScreen(Graphics g) {
         final int width = screenPanel.getWidth();
         final int height = screenPanel.getHeight();
-        g.setColor(Color.BLACK);
+        g.setColor(bkColor);
         g.fillRect(0, 0, width, height);
-        g.setColor(Color.YELLOW);
-        g.drawLine(0, height / 2, width, height / 2);
         if (buf != null && buf.length >= len) {
             double dx = (double) len / width;
             double dy = (double) height / 256.0;
             double offset = off;
-            g.setColor(Color.GREEN);
+            g.setColor(waveColor);
             for (int i = 0; i < width; i++, offset += dx) {
                 int b = buf[(int) offset] & 0xff;
                 int y = (int) ((255 - b) * dy);
@@ -75,6 +90,8 @@ public class InteractivePanel extends JPanel {
             }
             g.drawPolyline(x, y, width);
         }
+        g.setColor(lineColor);
+        g.drawLine(0, height / 2, width, height / 2);
     }
 
     public void updateData(byte[] buf, int off, int len) {

@@ -1,11 +1,13 @@
 package ru.retro.assembler.z80.editor.core.menu.run;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import ru.retro.assembler.editor.core.control.Controller;
@@ -25,67 +27,69 @@ import ru.retro.assembler.z80.editor.utils.ResourceUtils;
  */
 @Slf4j
 public class TapePlayerMenuItem extends AbstractMenuItem {
-  protected static final String EXTENSION = "wav";
+    protected static final String EXTENSION = "wav";
 
-  private Player player;
+    private Player player;
 
-  private final MainWindow mainWindow;
+    private final MainWindow mainWindow;
 
-  private final AppSettings settings;
+    private final AppSettings settings;
 
-  private CompileWavMenuItem compileWavMenuItem;
+    private CompileWavMenuItem compileWavMenuItem;
 
-  public TapePlayerMenuItem(
-      @NonNull Controller controller) {
-    super(controller, Z80Messages.getInstance().get(Z80Messages.TAPE_PLAYER), (char) 0, KeyStroke
-        .getKeyStroke(KeyEvent.VK_F10, InputEvent.ALT_DOWN_MASK | InputEvent
-            .SHIFT_DOWN_MASK), null);
-    this.mainWindow = controller.getMainWindow();
-    this.settings = controller.getSettings();
-    this.compileWavMenuItem = new CompileWavMenuItem(controller);
-  }
-
-  @Override
-  public int order() {
-    return 1;
-  }
-
-  @Override
-  public boolean hasSeparator() {
-    return false;
-  }
-
-  @Override
-  public void onAction(ActionEvent actionEvent) {
-    log.info("Action play");
-    final Source selectedSource = mainWindow.getSourceTabbedPane().getSourceSelected();
-    if (selectedSource == null) {
-      return;
+    public TapePlayerMenuItem(
+            @NonNull Controller controller) {
+        super(controller, Z80Messages.getInstance().get(Z80Messages.TAPE_PLAYER), (char) 0, KeyStroke
+                .getKeyStroke(KeyEvent.VK_F10, InputEvent.ALT_DOWN_MASK | InputEvent
+                        .SHIFT_DOWN_MASK), "/icon16x16/play.png");
+        this.mainWindow = controller.getMainWindow();
+        this.settings = controller.getSettings();
+        this.compileWavMenuItem = new CompileWavMenuItem(controller);
     }
-    play(actionEvent, selectedSource.getFile());
-  }
 
-  private void play(ActionEvent actionEvent, @NonNull final File file) {
-    String name = file.getName();
-    name = ResourceUtils.cutExtension(name);
-    final File wavFile = new File(settings.getOutputDirectory(), name + "." + EXTENSION);
-    wavFile.delete();
-    compileWavMenuItem.onAction(actionEvent);
-    final Player player = getPlayer();
-    player.setFile(wavFile);
-    player.setLocationRelativeTo(mainWindow);
-    SwingUtilities.invokeLater(() -> player.showModal());
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return mainWindow.getSourceTabbedPane().getTabCount() != 0;
-  }
-
-  private Player getPlayer() {
-    if (player == null) {
-      player = new Player(controller.getMainWindow());
+    @Override
+    public int order() {
+        return 1;
     }
-    return player;
-  }
+
+    @Override
+    public boolean hasSeparator() {
+        return false;
+    }
+
+    @Override
+    public void onAction(ActionEvent actionEvent) {
+        log.info("Action play");
+        final Source selectedSource = mainWindow.getSourceTabbedPane().getSourceSelected();
+        if (selectedSource == null) {
+            log.info("No selected");
+            return;
+        }
+        play(actionEvent, selectedSource.getFile());
+    }
+
+    private void play(ActionEvent actionEvent, @NonNull final File file) {
+        String name = file.getName();
+        name = ResourceUtils.cutExtension(name);
+        final File wavFile = new File(settings.getOutputDirectory(), name + "." + EXTENSION);
+        final Player player = getPlayer();
+        player.setFile(wavFile);
+        player.setLocationRelativeTo(mainWindow);
+        SwingUtilities.invokeLater(() -> player.showModal());
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return mainWindow.getSourceTabbedPane().getTabCount() != 0;
+    }
+
+    private Player getPlayer() {
+        if (player == null) {
+            player = new Player(controller.getMainWindow());
+            player.getInteractivePanel().setBkColor(Color.WHITE);
+            player.getInteractivePanel().setWaveColor(Color.RED);
+            player.getInteractivePanel().setLineColor(Color.BLACK);
+        }
+        return player;
+    }
 }

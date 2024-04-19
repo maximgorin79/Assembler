@@ -200,6 +200,26 @@ public final class Messages {
 
     public static final String PLAY = "play";
 
+    public static final String RECORDER_TITLE = "recorder_title";
+
+    public static final String RECORD = "record";
+
+    public static final String WAVE_FILES = "wav_files";
+
+    public static final String IMPORT = "import";
+
+    public static final String ALL_FILES = "all_files";
+
+    public static final String UNSUPPORTED_FORMAT = "unsupported_format";
+
+    public static final String IMPORT_ERROR = "import_error";
+
+    public static final String ADDRESS = "address";
+
+    public static final String ENTER_ADDRESS = "enter_address";
+
+    public static final String LINE_SEPARATOR = "line_separator";
+
     public static Locale getLocale() {
         return Locale.getDefault();
     }

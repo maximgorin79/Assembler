@@ -74,6 +74,14 @@ public final class I8080Messages {
 
     public static final String TAPE_PLAYER = "tape_player";
 
+    public static final String RECORDER = "recorder";
+
+    public static final String IMPORT_FILE = "import_file";
+
+    public static final String BINARY_FILES = "binary_files";
+
+    public static final String ALL_FILES = "all_files";
+
     private I8080Messages() {
         bundle = ResourceBundle.getBundle("i18n.I8080EditorMessages");
     }

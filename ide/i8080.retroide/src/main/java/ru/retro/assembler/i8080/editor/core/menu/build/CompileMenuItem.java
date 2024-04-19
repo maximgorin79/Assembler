@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import ru.retro.assembler.editor.core.control.Controller;
 import ru.retro.assembler.editor.core.io.Source;
+import ru.retro.assembler.editor.core.ui.progress.SimpleWorker;
 import ru.retro.assembler.i8080.editor.core.i18n.I8080Messages;
 
 import javax.swing.*;
@@ -15,7 +16,7 @@ import java.awt.event.KeyEvent;
 public class CompileMenuItem extends AbstractCompileMenuItem {
     public CompileMenuItem(@NonNull Controller controller) {
         super(controller, I8080Messages.getInstance().get(I8080Messages.COMPILE), 'C', KeyStroke.getKeyStroke(KeyEvent
-                        .VK_F9, InputEvent.CTRL_DOWN_MASK), "/icon16x16/equipment.png");
+                .VK_F9, InputEvent.CTRL_DOWN_MASK), "/icon16x16/equipment.png");
     }
 
     @Override
@@ -31,7 +32,19 @@ public class CompileMenuItem extends AbstractCompileMenuItem {
     @Override
     public void onAction(ActionEvent e) {
         log.info("Action compile");
-        compile();
+        final SimpleWorker<Void> worker = new SimpleWorker<>(controller.getMainWindow()) {
+
+            @Override
+            protected Void perform() throws Exception {
+                compile();
+                return null;
+            }
+        };
+        try {
+            worker.execute();
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+        }
     }
 
     private void compile() {
