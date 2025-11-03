@@ -281,6 +281,7 @@ Operator				= ("+"|"-"|"*"|"/"|"%"|"^"|"|"|"&"|"~"|"!"|"="|"<"|">")
 	".IMG"			{ addToken(Token.FUNCTION); }
 
 	/* Registers */
+	"PSW" |
 	"A" |
 	"B" |
 	"C" |
@@ -291,7 +292,8 @@ Operator				= ("+"|"-"|"*"|"/"|"%"|"^"|"|"|"&"|"~"|"!"|"="|"<"|">")
 	"M" 		{ addToken(Token.VARIABLE); }
 
 	/* i8080 Instructions. */
-	"NOP" |
+	"ANI" |
+ 	"NOP" |
 	"ADD" |
 	"ADI" |
 	"ADC" |
