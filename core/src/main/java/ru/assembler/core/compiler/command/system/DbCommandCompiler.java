@@ -72,8 +72,8 @@ public class DbCommandCompiler implements CommandCompiler {
           nextLexem = iterator.hasNext() ? iterator.next() : null;
         } else {
           if (nextLexem.getType() == LexemType.CHAR || nextLexem.getType() == LexemType.DECIMAL ||
-              nextLexem.getType() == LexemType.OCTAL
-              || nextLexem.getType() == LexemType.HEXADECIMAL) {
+              nextLexem.getType() == LexemType.OCTAL || nextLexem.getType() == LexemType.HEXADECIMAL ||
+              nextLexem.getType() == LexemType.BINARY) {
             final Expression expression = new Expression(nextLexem.getFd(), iterator,
                 namespaceApi);
             final Expression.Result result = expression.evaluate(nextLexem);
