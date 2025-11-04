@@ -26,7 +26,7 @@ import java.util.List;
 public class TestLexemAnalyzer {
     @Test
     public void testNumbers() throws IOException {
-        String numbers = "1234 0h 0123 0x123 0b111 0123h 1001b 077q 0";
+        String numbers = "1234 0h 0123 0x123 0b111 0123h 1001b 077q 0 011101b 0567h";
         LexemAnalyzer analyzer = new LexemAnalyzer(new FileDescriptor(new File("")), new ByteArrayInputStream(numbers.getBytes()));
         Lexem lexem;
         Iterator<Lexem> iter = analyzer.iterator();
@@ -44,6 +44,8 @@ public class TestLexemAnalyzer {
         Assertions.assertEquals(lexemList.get(6), new Lexem( LexemType.BINARY, "1001"));
         Assertions.assertEquals(lexemList.get(7), new Lexem( LexemType.OCTAL, "77"));
         Assertions.assertEquals(lexemList.get(8), new Lexem( LexemType.OCTAL, "0"));
+        Assertions.assertEquals(lexemList.get(9), new Lexem( LexemType.BINARY, "011101"));
+        Assertions.assertEquals(lexemList.get(10), new Lexem( LexemType.HEXADECIMAL, "0567"));
     }
 
     @Test
