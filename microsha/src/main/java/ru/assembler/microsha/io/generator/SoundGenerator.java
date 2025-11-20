@@ -70,13 +70,8 @@ public class SoundGenerator extends Generator {
         initData();
     }
 
-    @Override
-    public void generateWav(@NonNull Object data) throws IOException {
+    private void generateWav(@NonNull RkmData rkmData) throws IOException {
         Objects.requireNonNull(file, "File non null is required");
-        if (!(data instanceof RkmData)) {
-            throw new IllegalArgumentException("Unsupported argument type: " + data.getClass());
-        }
-        final RkmData rkmData = (RkmData) data;
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Arrays.fill(firWindow, (byte) 0x80);
         // preamble. this sounds like an ~3 second long 700 Hz tone
@@ -96,6 +91,42 @@ public class SoundGenerator extends Generator {
         try (FileOutputStream fos = new FileOutputStream(file)) {
             wavFile.write(fos);
         }
+    }
+
+    private void generateWav(@NonNull byte [] data) throws IOException {
+        Objects.requireNonNull(file, "File non null is required");
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Arrays.fill(firWindow, (byte) 0x80);
+        // preamble. this sounds like an ~3 second long 700 Hz tone
+        for (int i = 0; i < 256; i++) {
+            writeByte(baos, 0);
+        }
+        // sync byte
+        writeByte(baos, 0xE6);
+        final ByteArrayOutputStream tapeDataOs = new ByteArrayOutputStream();
+        tapeDataOs.write(data);
+        // save rkm data
+        write(baos, tapeDataOs.toByteArray());
+        Arrays.fill(buf, 0, FIR_WEIGHTS.length - 1, (byte) 0x80);
+        // some intermediate values in the end, for the FIR filter
+        write(baos, Arrays.copyOf(buf, FIR_WEIGHTS.length));
+        WavWriter wavFile = new WavWriter(baos.toByteArray(), sampleRate, 1);
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            wavFile.write(fos);
+        }
+    }
+
+    @Override
+    public void generateWav(@NonNull Object data) throws IOException {
+        if (data instanceof RkmData) {
+            generateWav((RkmData) data);
+            return;
+        }
+        if (data instanceof byte []) {
+            generateWav((byte []) data);
+            return;
+        }
+        throw new IllegalArgumentException("Unsupported argument type: " + data.getClass());
     }
 
     protected byte[] firLowPassFilter(@NonNull final byte[] data) {
