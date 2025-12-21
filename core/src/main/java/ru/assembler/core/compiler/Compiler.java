@@ -313,7 +313,7 @@ public class Compiler implements CompilerApi {
         try (FileInputStream fis = new FileInputStream(file)) {
             data = IOUtils.toByteArray(fis);
         }
-        final LexemAnalyzer lexemAnalyzer = new LexemAnalyzer(fd, new ByteArrayInputStream(data)
+        final LexemAnalyzer lexemAnalyzer = new LexemAnalyzer(new FileDescriptor(file), new ByteArrayInputStream(data)
                 , settingsApi.getPlatformEncoding(), settingsApi.getSourceEncoding());
         lexemAnalyzer.setTrimEof(false);
         syntaxAnalyzer.append(new RepeatableIteratorImpl<>(lexemAnalyzer.iterator()));
