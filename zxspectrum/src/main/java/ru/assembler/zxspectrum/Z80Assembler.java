@@ -327,15 +327,13 @@ public class Z80Assembler extends AbstractNamespaceApi {
         postCommandCompilerMap.put(postCommandCompiler.getCommandOffset(), postCommandCompiler);
     }
 
-    protected void postCompile(@NonNull final File outputFile) {
+    protected void postCompile(@NonNull final File outputFile) throws Exception {
         RandomAccessFile randomAccessFile = null;
         try {
             randomAccessFile = new RandomAccessFile(outputFile, "rwd");
             for (Map.Entry<BigInteger, PostCommandCompiler> entry : postCommandCompilerMap.entrySet()) {
                 entry.getValue().compile(randomAccessFile);
             }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
         } finally {
             FileUtil.safeClose(randomAccessFile);
         }
