@@ -32,9 +32,9 @@ public abstract class CommandLoader<E> {
         Set<String> cpuSet;
         try {
             while ((line = reader.readLine()) != null) {
-                if (!line.trim().startsWith(";")) {
-
-                    String[] data = line.split("\t");
+                line = removeComment(line);
+                if (!line.isEmpty()) {
+                    String[] data = line.split("\t{1,}");
                     codePattern = data[0].trim();
                     commandPattern = data[1].trim();
                     if (data.length > 2) {
@@ -59,6 +59,22 @@ public abstract class CommandLoader<E> {
             throw new AssemblerException(String.format("[%d][%s][%s]", lineNumber, codePattern, commandPattern));
         }
         return value;
+    }
+
+    private static String removeComment(String line) {
+        if (line == null) {
+            return line;
+        }
+        line = line.trim();
+        if (line.isEmpty()) {
+            return line;
+        }
+        int index = line.indexOf(';');
+        if (index == -1) {
+            return line;
+        }
+        line = line.substring(0, index);
+        return line.trim();
     }
 
     private static Set<String> parseCpuModels(String cpuModels) {
