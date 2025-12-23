@@ -32,19 +32,22 @@ public abstract class CommandLoader<E> {
         Set<String> cpuSet;
         try {
             while ((line = reader.readLine()) != null) {
-                String[] data = line.split("\t");
-                codePattern = data[0].trim();
-                commandPattern = data[1].trim();
-                if (data.length > 2) {
-                    cpuSet = parseCpuModels(data[2].trim());
-                } else {
-                    cpuSet = Collections.emptySet();
-                }
-                if (!isPatternParametersAreEqual(codePattern, commandPattern)) {
-                    throw new CompilerException(null, lineNumber, Messages.getMessage(Messages
+                if (!line.trim().startsWith(";")) {
+
+                    String[] data = line.split("\t");
+                    codePattern = data[0].trim();
+                    commandPattern = data[1].trim();
+                    if (data.length > 2) {
+                        cpuSet = parseCpuModels(data[2].trim());
+                    } else {
+                        cpuSet = Collections.emptySet();
+                    }
+                    if (!isPatternParametersAreEqual(codePattern, commandPattern)) {
+                        throw new CompilerException(null, lineNumber, Messages.getMessage(Messages
                             .VARIABLE_PATTERNS_ARE_NOT_EQUAL), codePattern + "\t" + commandPattern);
+                    }
+                    prepare(value, lineNumber, codePattern, commandPattern, cpuSet);
                 }
-                prepare(value, lineNumber, codePattern, commandPattern, cpuSet);
                 lineNumber++;
             }
         } catch (NoSuchElementException e) {
