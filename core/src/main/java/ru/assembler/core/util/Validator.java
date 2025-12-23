@@ -5,7 +5,7 @@ public final class Validator {
 		
 	}
 	
-	public static final boolean isBinary(String s) {
+	public static boolean isBinary(final String s) {
 		if (s == null || s.trim().isEmpty()) {
 			return false;
 		}
@@ -17,7 +17,7 @@ public final class Validator {
 		return true;
 	}
 	
-	public static final boolean isOctal(String s) {
+	public static boolean isOctal(final String s) {
 		if (s == null || s.trim().isEmpty()) {
 			return false;
 		}
@@ -29,7 +29,7 @@ public final class Validator {
 		return true;
 	}
 	
-	public static final boolean isDecimal(String s) {
+	public static boolean isDecimal(final String s) {
 		if (s == null || s.trim().isEmpty()) {
 			return false;
 		}
@@ -41,7 +41,7 @@ public final class Validator {
 		return true;
 	}
 	
-	public static final boolean isHexDecimal(String s) {
+	public static boolean isHexDecimal(final String s) {
 		if (s == null || s.trim().isEmpty()) {
 			return false;
 		}
@@ -53,7 +53,7 @@ public final class Validator {
 		return true;
 	}
 	
-	public static final boolean isIdentifier(String s) {
+	public static boolean isIdentifier(final String s) {
 		if (s == null || s.trim().isEmpty()) {
 			return false;
 		}
@@ -68,5 +68,9 @@ public final class Validator {
 			return true;
 		}
 		return false;
+	}
+
+	public static boolean isNumber(final String s) {
+		return isBinary(s) || isOctal(s) || isDecimal(s) || isHexDecimal(s);
 	}
 }

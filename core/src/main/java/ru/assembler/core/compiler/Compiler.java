@@ -3,6 +3,7 @@ package ru.assembler.core.compiler;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,6 +61,8 @@ import ru.assembler.core.util.RepeatableIteratorImpl;
 public class Compiler implements CompilerApi {
 
     private static final String TEMPLATE_NAME = "template";
+
+    private static final String V_TEMPLATE_NAME = "v_template";
 
     protected final NamespaceApi namespaceApi;
 
@@ -198,9 +201,34 @@ public class Compiler implements CompilerApi {
         }
     }
 
+    private void loadVariables() throws IOException {
+        List<String> vTemplatePaths = new LinkedList<>();
+        int i = 0;
+        while (true) {
+            String path = Variables.getString(V_TEMPLATE_NAME + i, null);
+            if (path == null) {
+                break;
+            }
+            vTemplatePaths.add(path);
+            i++;
+        }
+        AssemblerVariableLoader loader = new AssemblerVariableLoader();
+        for (String vTemplatePath : vTemplatePaths) {
+            final Map<String, BigInteger> varMap = loader.load(vTemplatePath, Charset.defaultCharset());
+            for (Map.Entry<String, BigInteger> entry : varMap.entrySet()) {
+                namespaceApi.addVariable(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    private void loadTables() throws IOException {
+        loadCommandTables();
+        loadVariables();
+    }
+
     @Override
     public void compile() throws IOException {
-        loadCommandTables();
+        loadTables();
         Output.println(
                 Messages.getMessage(Messages.COMPILING) + " " + getFd().getDisplay());
         for (LexemSequence lexemSequence : syntaxAnalyzer) {

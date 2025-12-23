@@ -94,8 +94,9 @@
                 <directory>src/resources</directory>
                 <includes>
                     <include>**/*.op</include>
+		    <include>**/*.def</include> 
                     <include>**/*.properties</include>
-                </includes>
+                </includes>		
                 <filtering>true</filtering>
             </resource>
         </resources>
