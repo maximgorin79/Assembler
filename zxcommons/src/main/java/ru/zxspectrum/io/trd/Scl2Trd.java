@@ -6,7 +6,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Scl2Trd {
     private byte [] emptyArray = new byte[1792];
@@ -105,17 +117,13 @@ public class Scl2Trd {
                 oStream.write(buff, 0, 256);
             }
         }
-        System.out.println(" * All data written!");
-        System.out.println("");
-        System.out.println(" TRD file is stored and ready to use!");
-        System.out.println("");
-        System.out.println("Success!");
     }
-    private void run(String [] args) throws IOException {
+    private void run(String inputFileName, String outputFileName) throws IOException {
         try {
-            iStream = new FileInputStream(args[0]);
-            oStream = new FileOutputStream(args[1]);
+            iStream = new FileInputStream(inputFileName);
+            oStream = new FileOutputStream(outputFileName);
             validateScl();
+            System.out.printf(" TRD file %s is stored and ready to use!\n", outputFileName);
         } catch (Exception e) {
             e.fillInStackTrace();
         }
@@ -138,26 +146,96 @@ public class Scl2Trd {
             }
         }
     }
-
-    public static void main(String []args) throws IOException {
-        if (args.length == 0) {
-            System.err.println("No input/output files!");
-            return;
+    private static String createFileName(String fileName) {
+        if (fileName == null || fileName.trim().isEmpty()) {
+            throw new IllegalArgumentException("null or empty");
         }
-        if (args.length == 1) {
-            System.err.println("No output file!");
-            return;
+        int index = fileName.lastIndexOf('.');
+        if (index != -1)    {
+            fileName = fileName.substring(0, index);
+        }
+        return fileName + ".trd";
+    }
+
+    private static void convertSingle(String []args) throws IOException {
+        String outputFileName = null;
+        if (args.length >= 2) {
+            outputFileName = args[1];
+        }
+        if (outputFileName == null) {
+            outputFileName = createFileName(args[0]);
         }
         File input = new File(args[0]);
         if (!input.exists()) {
-            System.err.println("Input file does not exist!");
-            return;
+            throw new IOException("Input file does not exist!");
         }
-        File output = new File(args[1]);
+        File output = new File(outputFileName);
         if (output.exists()) {
-            System.err.println("Output file already exists!");
+            throw new IOException(outputFileName + " file is already exists!");
+        }
+        new Scl2Trd().run(args[0], outputFileName);
+    }
+
+    private static void convertBatch(String []args) throws IOException {
+        String pattern = "glob:*.scl";
+        Path dir = Paths.get("").toAbsolutePath();
+        if (args.length >= 2) {
+            pattern = "glob:" + args[1];
+        }
+        SearchingFileByWildcard searcher = new SearchingFileByWildcard();
+        List<String> fileNames = searcher.search(dir, pattern);
+        int count = 0;
+        for (String fileName : fileNames) {
+           String outputFileName = createFileName(fileName);
+           try {
+               convertSingle(Arrays.asList(fileName, outputFileName).toArray(new String[2]));
+               count++;
+           } catch (IOException e) {
+               System.err.println(e.getMessage());
+           }
+        }
+
+        if (count == 1) {
+            System.out.printf("%d file is converted successfully\n", count);
+        } else {
+            System.out.printf("%d files are converted successfully\n", count);
+        }
+    }
+
+    public static void main(String []args) throws IOException {
+        if (args.length == 0) {
+            System.out.println("Usage:");
+            System.out.println("Scl2Trd <scl file> [<trd file>] - to convert a scl file into a trd file");
+            System.out.println("Scl2Trd -d [<file pattern>] - to convert all scl files in the current directory");
             return;
         }
-        new Scl2Trd().run(args);
+        if (args[0].equalsIgnoreCase("-d")) {
+            convertBatch(args);
+        } else {
+            convertSingle(args);
+        }
+    }
+
+    static class SearchingFileByWildcard {
+
+        private List<String> matchesList = new LinkedList<>();
+
+        private List<String> search(Path rootDir, String pattern) throws IOException {
+            matchesList.clear();
+            final FileVisitor<Path> matcherVisitor = new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attr)  {
+                    FileSystem fs = FileSystems.getDefault();
+                    PathMatcher matcher = fs.getPathMatcher(pattern);
+                    Path name = file.getFileName();
+                    if (matcher.matches(name)) {
+                        matchesList.add(name.toString());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            };
+            Files.walkFileTree(rootDir, matcherVisitor);
+            return matchesList;
+        }
     }
 }

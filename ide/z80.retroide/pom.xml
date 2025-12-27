@@ -114,10 +114,14 @@
         <resources>
             <resource>
                 <directory>src/resources</directory>
+		<filtering>true</filtering>
                 <includes>
                     <include>**/*</include>
                 </includes>
-                <filtering>true</filtering>
+		<excludes>
+		    <exclude>ru/assembler/core/compiler/**/*</exclude>	
+		    <exclude>ru/assembler/core/syntax/**/*</exclude>	 
+		</excludes>
             </resource>
         </resources>
     </build>

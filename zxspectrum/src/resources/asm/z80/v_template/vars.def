@@ -10,7 +10,7 @@ ATTR_SIZE		768
 SCREEN_CLEAR		3435; ATTR_P_ADDR - screen color, BORDCR_ADDR - border color
 SCREEN_POINT		8933; C - x, B - y
 SCREEN_SCROLL		3582
-SCREEN_CIRCLE		9005; Push x, y, r
+SCREEN_CIRCLE		9005; Push x, y, r on the stack
 
 ; Ports
 BORDER_PORT		0xFE
@@ -28,4 +28,4 @@ ATTR_P_ADDR		23693
 BORDCR_ADDR		23624
 
 ; Sound procedures
-SOUND_BEEP		949; HL - frequency è DE - duration
+SOUND_BEEP		949; HL - frequency and DE - duration
