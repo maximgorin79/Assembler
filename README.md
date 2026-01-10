@@ -1,38 +1,77 @@
-Features:
-1. Supports all z80 instructions including undocumented ones.
-
-2. Supported commands:
-.include, include  "<filename>" - include the source (example: include "gfx.asm")
-.def, def, .define. define <identifier> <expr> - define number (example: define WIDTH 256)
-.db, db, .defb, defb <expr0>, <expr1>...<exprN> - defines bytes (1 byte), string, character (example: db 1, 2, 3, "Hello world!")
-.dw, dw, .defw, defw <word expr0>,<word expr1>...<word exprN> - defines bytes (1 byte), words (2 bytes)
-, characters (example: defw 255, 65534, fffh)
-.ddw, ddw, .dd, dd, .defdw, defdw  <expr0>, <expr1>...<exprN> - defines bytes (1 byte), words (2 bytes)
-, dwords (4 bytes), characters (example: dd 0x123456h, 100000)
-.end, end - force compiler to stop (example: end)
-.saveWav, saveWav <text1>...<textN> - saves compiled data into wave format (for zxspectrum and microsha, example: saveWav "out.wav")
-.saveTap, saveTap <text1>...<textN> - saves compiled data into <tap> format (for zxspectrum, example: savetap "out.tap")
-.saveTzx, saveTzx <text1>...<textN> - saves compiled data into <tzx> format (for zxspectrum, example: saveTzx "out.tzx")
-.saveRkm, saveRkm <text1>...<textN> - saves compiled data into <rkm> format (for microsha, example: saverkm "out.rkm")
-label: .equ, equ  <address> - defines address for a label (example: lab1: equ 123)
-defres, resource <path1>...<pathN> - inserts binary data from a file into compiled file (example: .resource "/home/user/data.txt")
-img, image <path1>...<pathN> - inserts a image data from a file into the compiled file,  (example: img "icon.ong")
-if it is nesessary, converts to monochrome format
-echo, print, message <text1>...<text1> - prints messages in console (example: .echo "Hello world!\n")
-println <text1>..<text2> - the same as previous, but it prints a new message with a new line (example: println "Hello world!")
-
-3. Number formats:
-
-0[0..7]  - octal number (C-style) (example: 0234)
-[0..7][gG] - ocatl number (Old-style) (example: 123G)
-0x[0..F] - hexadecimal (C-style) (example: 0xFF)
-#[0..F]  - hexadecimal (example: #1c)
-$[0..F]  - hexadecimal (ZX-style) (example: $0C)
-[0..F][Hh]  - hexdecimal (Old-style) (example: 12h)
-0b[0..1] - binary (Java-style) (example: 0B11110000)
-[0..1][Bb]  - binary (Old-style) (example: 11101b)
-[0..9] - decimal (example: 12345)
-
-4. Variable:
-
-$var - compiler evaluates this variable
+<html>
+ <body>
+  <h1>Assembler for Z80 CPU</h1>
+  <h1>Features:</h1>
+	<h3>1. Supports all z80 instructions including undocumented ones.</h3>
+	<h3>2. Supported commands:</h3>
+	<b>.include</b>, <b>include</b>  <i>"filename"</i> - include the source (example: include "gfx.asm")<br>
+	<b>.def</b>, <b>def</b>, <b>.define</b> <b>define </b> <i>identifier</i> or <i>expr</i> - define number (example: define WIDTH 256)<br>
+	<b>.db</b>, <b>db</b>, <b>.defb</b>, <b>defb</b> <i>expr0, "expr1...exprN</i> - defines bytes (1 byte), string, character (example: db 1, 2, 3, "Hello world!")<br>
+	<b>.dw</b>, <b>dw</b>, <b>.defw</b>, <b>defw</b> <i>word expr0, word expr1...word exprN</i> - defines bytes (1 byte), words (2 bytes), characters (example: defw 255, 65534, fffh)<br>
+	<b>.ddw</b>, <b>ddw</b>, <b>.dd</b>, <b>dd</b>, <b>.defdw</b>, <b>defdw</b>  <i>expr0, expr1...exprN</i> - defines bytes (1 byte), words (2 bytes)
+	, <b>dwords</b> (4 bytes), characters (example: dd 0x123456h, 100000)<br>
+	<b>.end</b>, <b>end</b> - force compiler to stop (example: end)<br>
+	<b>.saveWav</b>, <b>saveWav</b> <i>"filename1"..."filenameN"</i> - saves compiled data into wave format (for zxspectrum and microsha, example: saveWav "out.wav")<br>
+	<b>.saveTap</b>, <b>saveTap</b> <i>"filename1"..."filenameN"</i> - saves compiled data into TAP format (for zxspectrum, example: savetap "out.tap")<br>
+	<b>.saveTzx</b>, <b>saveTzx</b> <i>"filename1"..."filenameN"</i> - saves compiled data into TZX format (for zxspectrum, example: saveTzx "out.tzx")<br>
+	<b>.saveRkm</b>, <b>saveRkm</b> <i>"filename1..."filenameN"</i> - saves compiled data into RKM format (for microsha, example: saverkm "out.rkm")<br>
+	label: <b>.equ</b>, <b>equ</b>  <i>address</i> - defines address for a label (example: lab1: equ 123)<br>
+	<b>defres</b>, <b>resource</b> <i>"path1"..."pathN"</i> - inserts binary data from a file into compiled file (example: .resource "/home/user/data.txt")<br>
+	<b>img</b>, <b>image</b> <i>"path1"..."pathN"</i> - inserts a image data from a file into the compiled file,  (example: img "icon.ong")
+	if it is nesessary, converts to monochrome format<br>
+	<b>echo</b>, <b>print</b>, message <i>"text1"..."text1"</i> - prints messages in console (example: .echo "Hello world!\n")<br>
+	<b>println</b> <i>"text1"..."text2"</i> - the same as previous, but it prints a new message with a new line (example: println "Hello world!")<br>
+	<h3>3. Number formats:</h3>
+	<b>0[0..7]</b>  - octal number (C-style) (example: 0234)<br>
+	<b>[0..7][gG]</b> - octal number (Old-style) (example: 123G)<br>
+	<b>0x[0..F]</b> - hexadecimal (C-style) (example: 0xFF)<br>
+	<b>#[0..F]</b> - hexadecimal (example: #1c)<br>
+	<b>$[0..F]</b> - hexadecimal (ZX-style) (example: $0C)<br>
+	<b>[0..F][Hh]</b>  - hexdecimal (Old-style) (example: 12h)<br>
+	<b>0b[0..1]</b> - binary (Java-style) (example: 0B11110000)<br>
+	<b>[0..1][Bb]</b>  - binary (Old-style) (example: 11101b)<br>
+	<b>[0..9]</b> - decimal (example: 12345)<br>
+	<h3>4. Variables:</h3>
+	<b>$var</b> - compiler evaluates the variable<br>
+	<h3>5. Synthetic instructions:</h3>
+	<h4>LD instructions:</h4>
+	<i>_LD DE,HL</i><br>
+	<i>_LD DE,BC</i><br>
+	<i>_LD HL,DE</i><br>
+	<i>_LD HL,BC</i><br>
+	<i>_LD BC,HL</i><br>
+	<i>_LD BC,DE</i><br>
+	<h4>MUL instructions:</h4>
+	<i>_MUL 2</i><br>
+	<i>_MUL A,2</i><br>
+	<i>_MUL 4</i><br>
+	<i>_MUL A,4</i><br>
+	<i>_MUL 8</i><br>
+	<i>_MUL A,8</i><br>
+	<i>_DIV 2</i><br>
+	<i>_DIV A,2</i><br>
+	<i>_DIV 4</i><br>
+	<i>_DIV A,4</i><br>
+	<i>_DIV 8</i><br>
+	<i>_DIV A,8</i><br>
+	<h4>EX instructions:</h4>
+	<i>_EX HL,DE</i><br>
+	<i>_EX HL,BC</i><br>
+	<i>_EX DE,BC</i><br>
+	<h4>SHIFT instructions:</h4>
+	<i>_RR [A][B][C][D][E][H][L],1</i><br>
+	<i>_RR [A][B][C][D][E][H][L],2</i><br>
+	<i>_RR [A][B][C][D][E][H][L],3</i><br>
+	<i>_RR [A][B][C][D][E][H][L],4</i><br>
+	<i>_RR [A][B][C][D][E][H][L],5</i><br>
+	<i>_RR [A][B][C][D][E][H][L],6</i><br>
+	<i>_RR [A][B][C][D][E][H][L],7</i><br>	
+	<i>_RL [A][B][C][D][E][H][L],1</i><br>
+	<i>_RL [A][B][C][D][E][H][L],2</i><br>
+	<i>_RL [A][B][C][D][E][H][L],3</i><br>
+	<i>_RL [A][B][C][D][E][H][L],4</i><br>
+	<i>_RL [A][B][C][D][E][H][L],5</i><br>
+	<i>_RL [A][B][C][D][E][H][L],6</i><br>
+	<i>_RL [A][B][C][D][E][H][L],7</i><br>
+ </body>
+</html>
