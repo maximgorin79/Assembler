@@ -2,12 +2,6 @@
  <body>
 	<h1>Assembler for Z80 CPU</h1>
 	<h1>Features:</h1>
-	<a href="#sup-cmd-id">Supported commands</a><br>
-	<a href="#num-fmt-id">Number formats</a><br>
-	<a href="#vars-id">Variables</a><br>
-	<a href="#synt-inst-id">Synthetic instructions</a><br>
-	<a href="#embd-vars-id">Embedded variables</a><br>
-
 	<h3>1. Supports all z80 instructions including undocumented ones.</h3>
 	<h3 id="sup-cmd-id">2. Supported commands:</h3>
 	<b>.include</b>, <b>include</b>  <i>"filename"</i> - include the source (example: include "gfx.asm")<br>
