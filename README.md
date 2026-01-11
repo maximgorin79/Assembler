@@ -1,7 +1,12 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8"> 
+  <title>Description</title>
+ </head>
  <body>
-  <h1>Assembler for Z80 CPU</h1>  	
-  <h1>Features:</h1>
+	<h1>Assembler for Z80 CPU</h1>
+	<h1>Features:</h1>
 	<a href="#sup-cmd-id">Supported commands</a><br>
 	<a href="#num-fmt-id">Number formats</a><br>
 	<a href="#vars-id">Variables</a><br>
