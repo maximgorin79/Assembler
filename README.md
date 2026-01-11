@@ -1,10 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
- <head>
-  <meta charset="UTF-8"> 
-  <title>Description</title>
- </head>
- <body>
 	<h1>Assembler for Z80 CPU</h1>
 	<h1>Features:</h1>
 	<a href="#sup-cmd-id">Supported commands</a><br>
@@ -99,5 +92,3 @@
 	<b>_PRINTER_PORT</b><br>
 	<b>_CONFIG_128K_PORT</b><br>
 	<b>_BDI_PORT</b><br>
- </body>
-</html>
