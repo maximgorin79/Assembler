@@ -29,3 +29,13 @@ _BORDSCR_ADDR		23624
 
 ; Sound procedures
 _SOUND_BEEP		949; HL - frequency and DE - duration
+
+;Colors
+_BLACK			0
+_BLUE			1
+_RED			2
+_MAGENTA		3
+_GREEN			4
+_CYAN			5
+_YELLOW			6
+_WHITE			7
