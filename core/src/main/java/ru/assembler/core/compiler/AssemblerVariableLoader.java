@@ -94,7 +94,7 @@ class AssemblerVariableLoader {
       addVariable(name, Converter.hexadecimalToBiginteger(value), varMap);
       return;
     }
-    if (value.startsWith("0")) {
+    if (value.startsWith("0") && value.length() > 1) {
       value = value.substring(1, value.length() - 1);
       if (!Validator.isOctal(value)) {
         throw new AssemblerException("bad octal format");
