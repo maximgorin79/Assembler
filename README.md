@@ -73,7 +73,7 @@
 	<i>_RL [A][B][C][D][E][H][L],5</i><br>
 	<i>_RL [A][B][C][D][E][H][L],6</i><br>
 	<i>_RL [A][B][C][D][E][H][L],7</i><br>
-	<h3 id="embd-vars-id">6. Embedded variables:</h3>
+	<h3 id="embd-cons-id">6. Embedded constants:</h3>
 	<b>_SCREEN_WIDTH</b> - Speccy screen width in pixels<br>
 	<b>_SCREEN_HEIGHT</b> - Speccy screen height in pixels<br>
 	<b>_SCREEN_ADDR</b> - the address of first screen data byte<br>

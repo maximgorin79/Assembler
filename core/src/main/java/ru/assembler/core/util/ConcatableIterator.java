@@ -2,6 +2,7 @@ package ru.assembler.core.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -23,10 +24,16 @@ public class ConcatableIterator<E> implements Iterator<E> {
   }
 
   public ConcatableIterator(@NonNull Collection<Iterator<E>> col) {
-    this.iterators.addAll(col);
-    current = iterators.peekFirst();
-    if (current != null) {
-      iterators.removeFirst();
+    if (!col.isEmpty()) {
+      if (col.size() > 1) {
+        LinkedList<Iterator<E>> chunk = new LinkedList<>();
+        chunk.addAll(col);
+        Collections.reverse(chunk);
+        this.iterators.addAll(chunk);
+      } else {
+        this.iterators.addAll(col);
+      }
+      current = iterators.pop();
     }
   }
 
@@ -38,12 +45,13 @@ public class ConcatableIterator<E> implements Iterator<E> {
     if (current.hasNext()) {
       return true;
     }
-    current = iterators.peekFirst();
-    if (current != null) {
-      iterators.removeFirst();
-      return hasNext();
+    try {
+      current = iterators.pop();
+    } catch (NoSuchElementException e) {
+      current = null;
+      return false;
     }
-    return false;
+    return hasNext();
   }
 
   @Override
@@ -51,18 +59,21 @@ public class ConcatableIterator<E> implements Iterator<E> {
     if (current == null) {
       throw new NoSuchElementException();
     }
-    try {
+    if (current.hasNext()) {
       return current.next();
-    } catch (NoSuchElementException e) {
-    }
-    current = iterators.peekFirst();
-    if (current != null) {
-      iterators.removeFirst();
+    } else {
+      current = null;
+      if (!iterators.isEmpty()) {
+        current = iterators.pop();
+      }
     }
     return next();
   }
 
   public void concat(@NonNull Iterator<E> iter) {
-    iterators.add(iter);
+    if (current != null) {
+      iterators.push(current);
+    }
+    current = iter;
   }
 }
