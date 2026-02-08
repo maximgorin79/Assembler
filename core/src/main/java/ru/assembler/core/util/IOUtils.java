@@ -56,6 +56,29 @@ public final class IOUtils {
         }
     }
 
+    public static void writeInt(@NonNull OutputStream os, int value, @NonNull ByteOrder order)
+        throws IOException {
+        try {
+            switch (order) {
+                case LittleEndian -> {
+                    os.write((byte) value);
+                    os.write((byte) (value >>> 8));
+                    os.write((byte) (value >>> 16));
+                    os.write((byte) (value >>> 24));
+                }
+                case BigEndian -> {
+                    os.write((byte) (value >>> 24));
+                    os.write((byte) (value >>> 16));
+                    os.write((byte) (value >>> 8));
+                    os.write((byte) value);
+                }
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
+    }
+
     public static int readWord(@NonNull InputStream is, @NonNull ByteOrder order) throws IOException {
         int ch1 = is.read();
         int ch2 = is.read();

@@ -93,7 +93,7 @@ public class DwCommandCompiler implements CommandCompiler {
                     .getMessage(Messages.LOSS_PRECISION_TYPE_FOR), result.getValue().toString()
                 , value.toString());
           }
-          IOUtils.writeWord(baos, value.byteValue(), settingsApi.getByteOrder());
+          writeValue(baos, value);
           nextLexem = expression.getLastLexem();
         } else {
           throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber(), Messages
@@ -114,6 +114,11 @@ public class DwCommandCompiler implements CommandCompiler {
       log.error(e.getMessage(), e);
       throw new CompilerException(e.getMessage(), e);
     }
+  }
+
+  protected void writeValue(@NonNull ByteArrayOutputStream baos, @NonNull BigInteger value)
+      throws IOException {
+    IOUtils.writeWord(baos, value.shortValue(), settingsApi.getByteOrder());
   }
 
   protected Type getDestType() {
