@@ -13,6 +13,7 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.io.IOUtils;
 import ru.assembler.core.compiler.command.nonparameterized.NonParametersCommandCompiler;
 import ru.assembler.core.compiler.command.parameterized.ParameterizedCommandCompiler;
+import ru.assembler.core.compiler.command.system.AllocCommandCompiler;
 import ru.assembler.core.compiler.command.system.DbCommandCompiler;
 import ru.assembler.core.compiler.command.system.DdwCommandCompiler;
 import ru.assembler.core.compiler.command.system.DefCommandCompiler;
@@ -160,6 +161,7 @@ public class Compiler implements CompilerApi {
         putCommandCompiler(new ImageCommandCompiler(settingsApi, this), commandCompilerMap);
         putCommandCompiler(new PrintCommandCompiler(namespaceApi, this), commandCompilerMap);
         putCommandCompiler(new PrintlnCommandCompiler(namespaceApi, this), commandCompilerMap);
+        putCommandCompiler(new AllocCommandCompiler(namespaceApi, this), commandCompilerMap);
     }
 
     private void loadCustomCommands(CommandTree commandCompilerTree) throws IOException {

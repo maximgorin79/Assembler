@@ -30,6 +30,12 @@ public final class Extractor {
     }
     for (Block block : blockList) {
       if (block.getFlag() == Flag.Data) {
+        if (block instanceof HeaderBlock) {
+          HeaderBlock hb = (HeaderBlock) block;
+          if (hb.getBytesParams() != null) {
+            System.out.println("START ADDRESS: " + hb.getBytesParams().getStartAddress());
+          }
+        }
         FileOutputStream fos = new FileOutputStream(args[1] + File.separator + "b" + i++ + ".bin");
         block.write(fos);
         fos.close();

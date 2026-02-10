@@ -55,15 +55,14 @@ public class DwCommandCompiler implements CommandCompiler {
       RepeatableIterator<Lexem> iterator = new RepeatableIteratorImpl<>(
           lexemSequence.get().iterator());
       Lexem nextLexem;
-      if (!iterator.hasNext() || !contains(names(), (nextLexem = iterator.next()).getValue())) {
+      if (!iterator.hasNext() || !contains(names(), (iterator.next()).getValue())) {
         return null;
       }
       nextLexem = iterator.hasNext() ? iterator.next() : null;
       while (true) {
         if (nextLexem == null) {
           throw new CompilerException(compilerApi.getFd(), compilerApi.getLineNumber(),
-              Messages
-                  .getMessage(Messages.VALUE_EXCEPTED));
+              Messages.getMessage(Messages.VALUE_EXCEPTED));
         }
         if (nextLexem.getType() == LexemType.CHAR || nextLexem.getType() == LexemType.DECIMAL ||
             nextLexem.getType() == LexemType.OCTAL || nextLexem.getType() == LexemType.HEXADECIMAL ||

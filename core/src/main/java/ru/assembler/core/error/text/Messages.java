@@ -122,6 +122,10 @@ public final class Messages {
 
     public static final String IMAGE_NOT_SUPPORTED = "image_not_supported";
 
+    public static final String POSITIVE_VALUE_REQUIRED = "positive_value_required";
+
+    public static final String DATA_TOO_LONG = "data_too_long";
+
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("asm.i18n.Messages");
 
     private Messages() {
