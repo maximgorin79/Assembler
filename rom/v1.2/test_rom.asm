@@ -1,9 +1,10 @@
 def PROG_ADDR	0000h
 
-def PROC_ADDR	0x5000
+def PROC_ADDR	0x4000
 
 def TEMPLATE_SIZE	59
 
+rom_start:
 org $PROG_ADDR
 	di
 	xor a, a
@@ -40,4 +41,5 @@ rom_loader_end:
 rom_data_addr:
 	resource "res/panama.bin"
 	
-rom_end:	
+rom_end:
+	alloc 16384 - (rom_end - rom_start)	

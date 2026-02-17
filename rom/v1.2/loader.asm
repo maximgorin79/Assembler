@@ -1,4 +1,4 @@
-def LOADER_ADDR 0x5000
+def LOADER_ADDR 0x4000
 
 org $LOADER_ADDR
 
@@ -6,10 +6,12 @@ def PAGE_SELECT_PORT 0x7f
 
 def TEMPLATE_SIZE	59
 
+def DELTAS_ROM_SIZE 0x85
+
 ; a - current number
 ; hl - data src
 loader_start:
-	ld sp, loader_end + $TEMPLATE_SIZE + 64
+	ld sp, loader_end + 32
 	or a, a
 	jr z, loader_l1
 	ld b, a
@@ -20,7 +22,7 @@ loader_start:
 	djnz loader_loop1
 	
  loader_l1:
-	ld b, 3
+	ld b, 3 ; number of pages
 	
  loader_main_loop:
 	push bc
@@ -53,8 +55,7 @@ loader_start:
 	
  loader_l5:
 	pop bc
-	djnz loader_main_loop
-	call loader_page_rst
+	djnz loader_main_loop	
 	jp loader_run
 
 loader_page_rst:
@@ -87,10 +88,10 @@ loader_unpack:
 	dec bc
 	cp a, 0xed
 	jr nz, loader_unpack_l1
-	ld ( loader_store + 1 ), a
+	ld ixl, a
 	call loader_read
 	dec bc
-	ld ( loader_store + 2 ), a
+	ld ixh, a
 	cp a, 0xed	
 	jr nz, loader_unpack_l2
 	call loader_read
@@ -107,9 +108,9 @@ loader_unpack:
 	jr loader_unpack
 	
  loader_unpack_l2:	
-	ld a, ( loader_store + 1)
+	ld a, ixl
 	call loader_write
-	ld a, ( loader_store + 2)
+	ld a, ixh
 	
  loader_unpack_l1:
 	call loader_write
@@ -118,43 +119,38 @@ loader_unpack:
 loader_read:
 	ld a, ( hl )
 	inc hl
-	ld ( loader_store ), a	
+	ld iyl, a	
 	ld a, h
-	cp a, 0x40 ; hl >= 16384
-	jr nz, loader_read_l1
-	xor a, a
-	ld h, a
-	;ld h, h
+	cp a, 0x20 ; hl >= 16384
+	jr  loader_read_l1		
 	ld a, 0xff
 	out ( $PAGE_SELECT_PORT ), a
+	ld h, 0
 
  loader_read_l1:
-	ld a, ( loader_store )
+	ld a, iyl
 	ret
 
 loader_write:
-	ld ( loader_store ), a	
+	ld iyl, a	
 	ld a, d	
 	cp a, $LOADER_ADDR >> 8
 	jr z, loader_no_write
 	cp a, 0x01 | ($LOADER_ADDR >> 8)
 	jr z, loader_no_write
-	ld a, ( loader_store )
+	ld a, iyl
 	ld ( de ), a
 	inc de
 	ret
 	
  loader_no_write:
-	ld a, ( loader_store )
+	ld a, iyl
 	inc de	
 	ret
 	
-loader_store:
-	defb 0, 0, 0
-	
-loader_run:
-	ld de, loader_end
-	ld bc, $TEMPLATE_SIZE	
+loader_run:	
+	ld de, reg_init
+	ld bc, reg_init_end - reg_init
 	
 loader_run_l1:
 	ld a, b
@@ -166,7 +162,21 @@ loader_run_l1:
 	dec bc
 	jr loader_run_l1
 	
-loader_run_exit_loop:	
+loader_run_exit_loop:
 	call loader_page_rst
+	ld hl, 0x1200
+	ld de, deltas_rom
+	ld bc, deltas_rom_end - deltas_rom 
+	ldir
+	ld hl, 0xffff
+	jp reg_init
 	
+deltas_rom:
+	alloc $DELTAS_ROM_SIZE
+deltas_rom_end:
+	
+reg_init:	
+	alloc $TEMPLATE_SIZE
+reg_init_end:
+
 loader_end:
