@@ -1,12 +1,10 @@
-def LOADER_ADDR 0x4000
-
-org $LOADER_ADDR
+def LOADER_ADDR 0x5b00
 
 def PAGE_SELECT_PORT 0x7f
 
-def TEMPLATE_SIZE	59
+def SCREEN_ADDR	0x4000
 
-def DELTAS_ROM_SIZE 0x85
+org $LOADER_ADDR
 
 ; a - current number
 ; hl - data src
@@ -55,8 +53,10 @@ loader_start:
 	
  loader_l5:
 	pop bc
-	djnz loader_main_loop	
-	jp loader_run
+	djnz loader_main_loop
+	call loader_page_rst
+	ld hl, 0xffff
+	jp $SCREEN_ADDR	
 
 loader_page_rst:
 	ld b, 0x7f
@@ -122,9 +122,10 @@ loader_read:
 	ld iyl, a	
 	ld a, h
 	cp a, 0x20 ; hl >= 16384
-	jr  loader_read_l1		
+	jr  loader_read_l1
+	;jr nz, loader_read_l1
 	ld a, 0xff
-	out ( $PAGE_SELECT_PORT ), a
+	out ( $PAGE_SELECT_PORT ), a ; switch page 
 	ld h, 0
 
  loader_read_l1:
@@ -136,7 +137,7 @@ loader_write:
 	ld a, d	
 	cp a, $LOADER_ADDR >> 8
 	jr z, loader_no_write
-	cp a, 0x01 | ($LOADER_ADDR >> 8)
+	cp a, $SCREEN_ADDR >> 8
 	jr z, loader_no_write
 	ld a, iyl
 	ld ( de ), a
@@ -146,37 +147,6 @@ loader_write:
  loader_no_write:
 	ld a, iyl
 	inc de	
-	ret
-	
-loader_run:	
-	ld de, reg_init
-	ld bc, reg_init_end - reg_init
-	
-loader_run_l1:
-	ld a, b
-	or c
-	jr z, loader_run_exit_loop
-	call loader_read
-	ld ( de ), a
-	inc de
-	dec bc
-	jr loader_run_l1
-	
-loader_run_exit_loop:
-	call loader_page_rst
-	ld hl, 0x1200
-	ld de, deltas_rom
-	ld bc, deltas_rom_end - deltas_rom 
-	ldir
-	ld hl, 0xffff
-	jp reg_init
-	
-deltas_rom:
-	alloc $DELTAS_ROM_SIZE
-deltas_rom_end:
-	
-reg_init:	
-	alloc $TEMPLATE_SIZE
-reg_init_end:
+	ret	
 
 loader_end:
