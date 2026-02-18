@@ -1,5 +1,7 @@
 package ru.assembler.core.compiler.command.system;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import lombok.NonNull;
 import ru.assembler.core.compiler.CommandCompiler;
@@ -41,7 +43,7 @@ public class AllocCommandCompiler implements CommandCompiler {
 
   @Override
   public byte[] compile(LexemSequence lexemSequence) {
-    byte[] buffer = null;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     RepeatableIterator<Lexem> iterator = new RepeatableIteratorImpl<>(
         lexemSequence.get().iterator());
     Lexem nextLexem;
@@ -73,11 +75,14 @@ public class AllocCommandCompiler implements CommandCompiler {
           throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber(), Messages
               .getMessage(Messages.POSITIVE_VALUE_REQUIRED));
         }
-        if (size >  8 * 1024 * 1024) { //8Mb
+        if (size >  1024 * 1024) { //1Mb
           throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber(), Messages
               .getMessage(Messages.DATA_TOO_LONG), value.toString());
         }
-        buffer = new byte[size];
+        byte []buffer = new byte[size];
+        try {
+          baos.write(buffer);
+        } catch (IOException e) {}
         nextLexem = expression.getLastLexem();
       } else {
         throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber(), Messages
@@ -93,6 +98,6 @@ public class AllocCommandCompiler implements CommandCompiler {
             .getMessage(Messages.EXPECTED_SYMBOL), ",");
       }
     }
-    return buffer;
+    return baos.toByteArray();
   }
 }

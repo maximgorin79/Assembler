@@ -159,7 +159,7 @@ public class Expression {
                 }
                 case PERCENT -> {
                     try {
-                        result.value = result.value.mod(result2.value);
+                        result.value = result.value.remainder(result2.value);
                     } catch (ArithmeticException e) {
                         throw new DividingByZeroException(fd, lexem.getLineNumber());
                     }
