@@ -1,0 +1,38 @@
+; Option count
+def	NUM_OPTIONS	3
+
+def MENU_LEFT	9
+
+def MENU_TOP	9
+
+def FLASHING	0x80
+
+def BRIGHT	0x40
+
+; Key pressing delay
+def	KB_DELAY 0x2fff
+
+; Selected flag for text
+def	SELECTED 0xff
+
+; Normal flag for text (not selected)
+def	NORMAL 0x00
+
+; Back screen address
+bk_screen_addr:
+	equ 0x8000
+
+; Back screen buffer to draw primitives	
+bk_attr_addr:
+	equ bk_screen_addr + $_SCREEN_SIZE
+	
+; Address area to store loader data
+menu_selected_addr:
+	equ bk_attr_addr + $_ATTR_SIZE
+	
+
+include "keyboard.asm"
+
+include "graph.asm"
+
+include "system.asm"
