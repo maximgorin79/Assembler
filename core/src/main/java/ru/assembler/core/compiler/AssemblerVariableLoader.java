@@ -79,7 +79,7 @@ class AssemblerVariableLoader {
     }
     value = value.toLowerCase();
     if (value.startsWith("0b")) {
-      value = value.substring(2, value.length() - 1);
+      value = value.substring(2, value.length());
       if (!Validator.isBinary(value)) {
         throw new AssemblerException("bad binary format");
       }
@@ -87,7 +87,7 @@ class AssemblerVariableLoader {
       return;
     }
     if (value.startsWith("0x")) {
-      value = value.substring(2, value.length() - 1);
+      value = value.substring(2, value.length());
       if (!Validator.isHexDecimal(value)) {
         throw new AssemblerException("bad hex format");
       }
