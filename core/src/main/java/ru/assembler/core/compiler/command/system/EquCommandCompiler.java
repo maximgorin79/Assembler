@@ -61,7 +61,7 @@ public class EquCommandCompiler implements CommandCompiler {
           , Messages.getMessage(Messages.CONSTANT_VALUE_REQUIRED));
     }
     final BigInteger equAddress = result.getValue();
-    if (!TypeUtil.isInRange(BigInteger.ZERO, settingsApi.getMaxAddress(), equAddress)) {
+    if (!TypeUtil.isInRange(settingsApi.getMinAddress(), settingsApi.getMaxAddress(), equAddress)) {
       throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber(), Messages
           .getMessage(Messages.ADDRESS_OUT_OF_RANGE), String.valueOf(result.getValue()));
     }
@@ -71,7 +71,7 @@ public class EquCommandCompiler implements CommandCompiler {
           .getMessage(Messages.LABEL_DECLARATION_REQUIRED));
     }
     //transform absolute address to relative
-    namespaceApi.putLabel(labelName, equAddress.subtract(namespaceApi.getAddress()));
+    namespaceApi.putLabel(labelName, equAddress.negate());
     nextLexem = expression.getLastLexem();
     if (nextLexem != null) {
       throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber(), Messages

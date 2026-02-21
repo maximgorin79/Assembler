@@ -302,9 +302,13 @@ public class Expression {
             result.setUndefined(true);
         }
         lastLexem = lexemIterator.hasNext() ? lexemIterator.next() : null;
-        value = value.add(namespaceApi.getAddress());
+        if (value.signum() >= 0) {
+            value = value.add(namespaceApi.getAddress());
+        } else {
+            value = value.negate();
+        }
         result.setValue(value);
-        return result;//absolut address
+        return result;//absolute address
     }
 
     private Result evaluateVariable(Lexem lexem) {
