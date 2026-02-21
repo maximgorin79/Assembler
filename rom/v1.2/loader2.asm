@@ -6,7 +6,7 @@ def TEMPLATE_SIZE	59
 
 	org 0x5b00
 
-; a - current number
+; a - current page
 ; hl - data src
 loader_start:
 
@@ -164,17 +164,6 @@ loader_exec:
 	ld de, $LOADER_ADDR
 	ld bc, $TEMPLATE_SIZE
 	call _ldir	
-	call loader_page_rst
-	;ld hl, 0x1200
-	;ld de, 0x4000
-	;ld bc,0x85
-	;ldir
-	;ex de, hl
-	;ld ( hl ), 0xc3 ; jp
-	;inc hl
-	;ld ( hl ), $LOADER_ADDR & 0xff
-	;inc hl
-	;ld ( hl ), $LOADER_ADDR >> 8
-	;ld hl, 0xffff
+	call loader_page_rst	
 	jp $LOADER_ADDR
 loader_end:

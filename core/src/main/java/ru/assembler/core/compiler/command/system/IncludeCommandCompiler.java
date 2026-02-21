@@ -60,7 +60,7 @@ public class IncludeCommandCompiler implements CommandCompiler {
             if (nextLexem.getType() == LexemType.STRING) {
                 final String path = nextLexem.getValue();
                 try {
-                    if (!compilerApi.include(FileUtil.toAbsolutePath(compilerApi.getFd().getFile().getParentFile(), path))) {
+                    if (!compilerApi.include(FileUtil.toAbsolutePath(nextLexem.getFd().getFile().getParentFile(), path))) {
                         Output.throwWarning(nextLexem.getFd(), nextLexem.getLineNumber(), Messages
                                 .getMessage(Messages.FILE_IS_ALREADY_INCLUDED), path);
                     }

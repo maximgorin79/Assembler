@@ -37,7 +37,7 @@ public class LimitedOutputStream extends OutputStream {
     }
 
     private void checkLimit() throws IOException {
-        if (limitation != null && counter >= limitation.getLimit()) {
+        if (limitation != null && counter > limitation.getLimit()) {
             throw new IOException("Exceed limit at " + limitation.getLimit() + " bytes");
         }
     }
