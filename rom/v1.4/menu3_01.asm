@@ -1,6 +1,6 @@
 ; v1.1
 
-def PROG_ADDR	0xc000
+def PROG_ADDR	0
 
 def LOADER_START_ADDR	0x5b00
 
@@ -31,7 +31,7 @@ main:
 	dec de
 	xor a, a
 	ld ( hl ), a	
-	;lddr	
+	lddr	
 	call start_menu
 	call loading_menu	
 	; ----------------------------------------
@@ -60,17 +60,38 @@ include "ui/ui3_01.hasm"
 include "ui/ui01.asm"
 
 font_raw_addr:
-	resource "res/godofwar.fnt"
+	resource "res/godofwar.fnt"	
 	
 title_addr:
-	defb "BEST COLLECTION 02", 0
+	defb "BEST COLLECTION 04", 0
+	;defb "BEST COLLECTION 02", 0
+	;defb "BEST COLLECTION 03", 0
+	;defb "BEST COLLECTION 05", 0
+	;defb "BEST COLLECTION 07", 0
+	
 	
 options_addr:
-	defb "1.Venom SB   ", 0
+	;defb "1.Venom Mask 3", 0
+	;defb "1.Commando     ", 0
+	;defb "1.Arc of Yesod  ", 0
+	;defb "1.Cybernoid   ", 0
+	;defb "1.Dan Dare   I", 0
+	defb "1.Eagle's Nest", 0
 	
-	defb "2.Dark fusion", 0
+	
+	;defb "2.Dark fusion ", 0
+	;defb "2.Ikari        ", 0
+	;defb "2.Nodes of Yesod", 0
+	;defb "2.Cybernoid II", 0
+	;defb "2.Dane Dare II", 0
+	defb "2.Starquake   ", 0
+	
 
-	defb "3.Bruce Lee  ", 0
+	;defb "3.Star Raiders 2", 0
+	;defb "3.Solomon's key", 0
+	;defb "3.Bruce Lee   ", 0
+	;defb "3.Zybex       ", 0
+	defb "3.Dan Dare I  ", 0
 	
 	
 author_addr:

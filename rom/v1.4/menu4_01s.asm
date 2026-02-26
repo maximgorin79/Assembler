@@ -2,7 +2,7 @@
 
 def PROG_ADDR	0
 
-def LOADER_START_ADDR	0x5b00
+def LOADER_START_ADDR	0x4000
 
 ; Back screen address
 bk_screen_addr:
@@ -74,14 +74,14 @@ options_addr:
 	
 	;defb "2.Jack Nipper 2", 0	
 	;defb "2.Starquake    ", 0
-	defb "2.Earth Shaker  ", 0
+	defb "2.Boulder Dash 2", 0
 
 	;defb "3.Panama Joe  1", 0
 	;defb "3.St raiders II", 0
-	defb "3.Exolon        ", 0
+	defb "3.Zynaps        ", 0
 
 	;defb "4.Paradroids   ", 0
-	defb "4.Manic Miner   ", 0
+	defb "4.Earth shaker  ", 0
 	
 author_addr:
 	defb "Created by Maxx in 2026",0
@@ -90,7 +90,7 @@ loading_addr:
 	defb "Loading...", 0
 
 loader_exec_begin:
-	resource "res/embedded/loader2.bin"
+	resource "res/embedded/loader3.bin"
 	
 data_header_table:
 ; format

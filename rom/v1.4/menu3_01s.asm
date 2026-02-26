@@ -2,7 +2,7 @@
 
 def PROG_ADDR	0
 
-def LOADER_START_ADDR	0x5b00
+def LOADER_START_ADDR	0x4000
 
 ; Back screen address
 bk_screen_addr:
@@ -30,9 +30,9 @@ main:
 	ld e,l
 	dec de
 	xor a, a
-	ld ( hl ), a
-	lddr
-	call start_menu	
+	ld ( hl ), a	
+	lddr	
+	call start_menu
 	call loading_menu	
 	; ----------------------------------------
 	ld hl, loader_exec_begin
@@ -55,33 +55,42 @@ main:
 	ex de, hl
 	jp $LOADER_START_ADDR
 
-include "ui/ui4_01.hasm"
+include "ui/ui3_01.hasm"
 
 include "ui/ui01.asm"
 
 font_raw_addr:
-	resource "res/godofwar.fnt"
+	resource "res/godofwar.fnt"	
 	
 title_addr:
-	;defb "BEST COLLECTION 01", 0
 	;defb "BEST COLLECTION 04", 0
-	defb "BEST COLLECTION 06", 0
+	;defb "BEST COLLECTION 02", 0
+	;defb "BEST COLLECTION 03", 0
+	;defb "BEST COLLECTION 05", 0
+	defb "BEST COLLECTION 07", 0
+	
 	
 options_addr:
-	;defb "1.Nether Earth ", 0
-	;defb "1.Eagle Nest   ", 0
-	defb "1.Boulder Dash 1", 0
+	;defb "1.Venom Mask 3", 0
+	;defb "1.Commando     ", 0
+	;defb "1.Arc of Yesod  ", 0
+	;defb "1.Cybernoid   ", 0
+	defb "1.Dan Dare   I", 0
 	
-	;defb "2.Jack Nipper 2", 0	
-	;defb "2.Starquake    ", 0
-	defb "2.Earth Shaker  ", 0
+	
+	;defb "2.Dark fusion ", 0
+	;defb "2.Ikari        ", 0
+	;defb "2.Nodes of Yesod", 0
+	;defb "2.Cybernoid II", 0
+	defb "2.Dane Dare II", 0
+	
 
-	;defb "3.Panama Joe  1", 0
-	;defb "3.St raiders II", 0
-	defb "3.Exolon        ", 0
-
-	;defb "4.Paradroids   ", 0
-	defb "4.Manic Miner   ", 0
+	;defb "3.Star Raiders 2", 0
+	;defb "3.Solomon's key", 0
+	;defb "3.Bruce Lee   ", 0
+	;defb "3.Zybex       ", 0
+	defb "3.Exolon      ", 0
+	
 	
 author_addr:
 	defb "Created by Maxx in 2026",0
@@ -90,7 +99,7 @@ loading_addr:
 	defb "Loading...", 0
 
 loader_exec_begin:
-	resource "res/embedded/loader2.bin"
+	resource "res/embedded/loader3.bin"
 	
 data_header_table:
 ; format
