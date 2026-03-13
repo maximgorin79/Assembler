@@ -40,9 +40,38 @@ loading_menu:
 
 
 draw_background:	
-	ld b, $_BLACK
+	ld b, $_BLACK	
+	push hl
 	call graph_cls	
+	pop hl
+	ld  b, 127
+	
+ draw_background_l1: 	
+ 	push bc
+ 	push hl
+ 	call system_random
+ 	ld e, a
+ 	call system_random
+ 	and a, 191
+ 	ld d, a
+ 	call system_random
+ 	and a, 7
+ 	ld hl, star_color
+ 	ld c, a
+ 	ld b, 0
+ 	add hl, bc
+ 	ld a, ( hl )
+ 	ld b, a
+ 	pop hl
+ 	push hl
+ 	call set_pixel
+ 	pop hl
+ 	pop bc
+	djnz draw_background_l1	
 	ret
+	
+star_color:
+	defb $_YELLOW, $_GREEN, $_RED, $_MAGENTA, $_BLUE, $_CYAN, $_WHITE, $_BRIGHT_RED
 	
 start_menu:
 	xor a, a	

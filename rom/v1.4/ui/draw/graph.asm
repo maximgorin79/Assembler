@@ -103,7 +103,7 @@ graph_print_l2:
 	add hl, bc	
 	ld a, d
 	ld d, 0
-	rla
+	rlca
 	rlca
 	rlca
 	rlca
@@ -315,61 +315,63 @@ graph_swap_screen_attr:
 ; hl - address of back screen
 ; e - x, d - y
 ; b - color
-; uses: ixl, a, c, iy
-;set_pixel:
-;	exx	
-;	ld a, d
-;	rla
-;	rla
-;	rla
-;	rla
-;	rla
-;	ld c, a
-;	and a, 0b00011111
-;	ld b, a
-;	ld a, c
-;	and a, 0b11100000
-;	ld c, a	
-;	add hl, bc
-;	ld a, e
-;	rra
-;	rra
-;	rra
-;	and a, 0b00011111
-;	ld b, 0
-;	ld c, a
-;	add hl, bc
-;	ld e, a
-;	and a, 0b00000111
-;	ld ( set_pixel_offset + 2), a
-;	ld iy, set_pixel_array	
-	
-;set_pixel_offset:	
-;	ld a, ( iy + 0)
-;	ld ( hl ) , a
-;	exx
-;	; attributes
-;	ld ixl, b
-;	ld bc, 6144
-;	add hl, bc
-;	ld d, a
-;	rla
-;	rla
-;	ld c, a
-;	and a, 0b00011111
-;	ld b, a
-;	ld a, c
-;	and a, 0b11100000
-;	ld c, a	
-;	add hl, bc
-;	ld b, 0
-;	ld c, c
-;	add hl, bc
-;	ld a, ixl
-;	ld ( hl ), a 
-;	ret
-;	
-;set_pixel_array:
-;	defb 128, 64, 32, 16, 8, 4, 2, 1
-	
-	
+; uses: a, c, iy
+set_pixel:
+	ld iyl, b
+	push hl
+	ld a, d
+	rlca
+	rlca
+	rlca
+	rlca
+	rlca
+	ld c, a
+	and a, 0x1f
+	ld b, a
+	ld a, c
+	and a, 0xe0
+	ld c, a
+	add hl, bc	
+	ld a, e
+	rrca
+	rrca
+	rrca
+	and a, 0x1f
+	ld c, a
+	ld iyh, a
+	ld b, 0
+	add hl, bc
+	ld a, e
+	and a, 0x07
+	exx
+	ld hl, pixel
+	ld b, 0
+	ld c, a
+	add hl, bc
+	ld a, ( hl )
+	exx
+	or a, ( hl )
+	ld ( hl ), a
+	pop hl
+	ld bc, 32 * 192
+	add hl, bc
+	ld a, d
+	and a, 0b11111000	
+	rlca
+	rlca
+	ld c, a
+	and a, 0x03
+	ld b, a
+	ld a, c
+	and a, 0xe0
+	ld c, a		
+	add hl, bc
+	ld a, iyh		
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ld a, iyl
+	ld ( hl ), a
+	ret
+pixel:	
+	defb 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01

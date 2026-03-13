@@ -1,9 +1,9 @@
 ; Option count
 def	NUM_OPTIONS	3
 
-def MENU_LEFT	9
+def MENU_LEFT	8
 
-def MENU_TOP	10
+def MENU_TOP	9
 
 def TITLE_TOP	2
 

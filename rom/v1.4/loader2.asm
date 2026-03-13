@@ -4,7 +4,7 @@ def PAGE_SELECT_PORT 0x7f
 
 def TEMPLATE_SIZE	59
 
-	org $LOADER_ADDR
+	org 0x5b00
 
 ; a - current number
 ; hl - data src
