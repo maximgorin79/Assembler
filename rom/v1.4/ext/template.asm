@@ -21,6 +21,6 @@
 	pop af
 	ld de, 0 ; de	
 	ld sp, 0 ; sp	
-	defb 0 ; di or ei
-	defb 0xed, 0 ; im 0-2	
+defb 0 ; di or ei
+defb 0xed, 0 ; im 0-2	
 	jp 0	; pc
