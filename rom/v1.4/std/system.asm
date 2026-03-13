@@ -1,20 +1,23 @@
 ; Delay
 ; bc - delay
-system_delay:
+delay:
 	push af
 	push bc
+
+ delay_start:
 	ld a, b
 	or c
-	jr z, system_delay_exit
+	jr z, delay_exit
 	nop
 	dec bc
-	jr system_delay
-system_delay_exit:
+	jr delay_start
+
+ delay_exit:
 	pop bc
 	pop af
 	ret	
 
-system_random:
+random:
 	push af
 	push hl
 	ld a, r			; Load the A register with the refresh register
@@ -50,5 +53,5 @@ set_48k_mode:
 	ld c, 0xfd
 	out ( c ), a
 	pop bc
-	push af
+	pop af
 	ret

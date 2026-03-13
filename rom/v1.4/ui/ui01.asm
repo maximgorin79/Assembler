@@ -7,9 +7,9 @@ def	SELECTED 0xff
 ; Normal flag for text (not selected)
 def	NORMAL 0x00
 
-include "system/system.asm"
+include "../std/system.asm"
 
-include "system/keyboard.asm"
+include "../std/keyboard.asm"
 
 include "draw/graph.asm"
 
@@ -49,12 +49,12 @@ draw_background:
  draw_background_l1: 	
  	push bc
  	push hl
- 	call system_random
+ 	call random
  	ld e, a
- 	call system_random
+ 	call random
  	and a, 191
  	ld d, a
- 	call system_random
+ 	call random
  	and a, 7
  	ld hl, star_color
  	ld c, a
@@ -144,7 +144,7 @@ key_listener_l1:
 	jr z, key_pressed_OK
 	
 	ld bc , $KB_DELAY
-	call system_delay
+	call delay
 	jr key_listener_l1	
 	
 key_pressed_9:	
