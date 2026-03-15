@@ -1,0 +1,24 @@
+def	ITEM_LEFT	1
+
+def	ITEM_TOP	2
+
+def	ITEM_COLUMN_SIZE	19
+
+def	ITEM_LENGTH	14
+
+bk_screen_addr:
+	equ 0x8000
+
+; Back screen buffer to draw primitives	
+bk_attr_addr:
+	equ bk_screen_addr + $_SCREEN_SIZE
+	
+; item of menu number selected (variable)
+item_selected_addr:
+	equ bk_attr_addr + $_ATTR_SIZE
+
+prev_item_selected_addr:
+	equ item_selected_addr + 1
+
+item_offset_addr:
+	equ prev_item_selected_addr + 1
