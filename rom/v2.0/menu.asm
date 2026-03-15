@@ -21,20 +21,32 @@ include "consts.hasm"
 	call _init_items
 	ld a, 36
 	ld ( items_count ), a
+	ld ix, font_addr
+	ld iy, scroll_text
+	call _scroll_init	
 
 loop:
+	; Scroller
+	ld hl, bk_screen_addr
+	ld d, 22
+	ld e, 6
+	add hl, de
+	ld iy, scroll_text
+	ld ix, font_addr
+	ld b, 26
+	call _scroll_all_lines
+	
+	; Items
 	ld hl, bk_screen_addr
 	ld d, $ITEM_TOP
 	ld e, $ITEM_LEFT
 	ld c, $ITEM_LENGTH
 	ld b, $ITEM_COLUMN_SIZE
 	ld ix, font_addr
-	ld iy, items_addr	
+	ld iy, items_addr
 	call _draw_items
 	ld hl, bk_screen_addr
 	call screen_swap
-
- wait: 	
 	ld bc, $KB_PORT | ($R_67890 << 8)
 	in a, ( c )
 	bit 2, a ; key '8'
@@ -45,7 +57,13 @@ loop:
 	jr z, pressed_6
 	bit 3, a ; key '7'
 	jr z, pressed_7
-	jr loop
+	bit 0, a ; key '0'
+	jr z, pressed_fire
+	ld bc, $KB_PORT | ($R_HJKLENT << 8)
+	in a, ( c )
+	bit 0, a ; key 'Enter'
+	jr z, pressed_fire
+	jr loop	
 	
  pressed_8: 
  	ld b, $ITEM_COLUMN_SIZE
@@ -66,7 +84,10 @@ pressed_7:
 	ld b, $ITEM_COLUMN_SIZE
  	call _items_navigate_right
 	jr loop
-	ret	
+
+pressed_fire:
+	call draw_loading
+	ret
 
 init:	
 	xor a, a	
@@ -74,21 +95,51 @@ init:
 	ld ( item_selected_addr ), a
 	ld ( prev_item_selected_addr ), a
 	ld a, $_WHITE
-	out ( 0xfe ), a
-	ld hl, bk_attr_addr
-	_ld de, hl
-	inc de
-	ld bc, 768
+	out ( 0xfe ), a	
+	ld hl, bk_screen_addr
 	ld a, $_BK_WHITE | $_BLACK
-	ld ( hl ), a
-	ldir
+	call _clear_desktop
 	ret
+
+draw_loading:
+	ld hl, bk_screen_addr
+	ld a, $_BK_WHITE | $_WHITE
+	call _clear_desktop	
+	ld hl, bk_screen_addr
+	ld iy, loading_addr
+	call strlen
+	inc a
+	inc a
+	ld c, a
+	ld b, 3
+	call _calc_center
+	ld a, $_BK_RED | $_WHITE | $_FLASHING
+	ld ( alert_msg_color ), a
+	ld iy, loading_addr
+	ld ix, font_addr	
+	call _draw_alert
+	ld hl, bk_screen_addr
+	call screen_swap
+lll: nop
+	jr lll
+	ret
+	
+scroll_text:
+	defb "Hi guys!!! Glad to present you a new ROM which"
+	defb " has 1 Mb size, where you can find all your favorite"
+	defb " games from childhood on the old respected zx speccy!"
+	defb " Loader written by Maxx in 2026.                      ", 0
 
 include "system/console.asm"
 
 include "ui/win.asm"
 
 include "system/screen.asm"
+
+include "ui/scroll.asm"
+
+loading_addr:
+	defb "Loading...", 0
 
 title_addr:
 	defb "Best of CRackOWN", 0
