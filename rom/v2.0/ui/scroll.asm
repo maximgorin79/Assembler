@@ -1,3 +1,17 @@
+def SCROLL_DELAY	256
+
+scroll_first_symbol:
+	equ 0x5b00 + 0
+
+scroll_symbol_index:
+	equ 0x5b00 + 8
+	
+scroll_scroll_count:
+	equ 0x5b00 + 10
+
+scroll_delay:
+	equ 0x5b00 + 11
+	
 ; ix - font address
 ; a - code of symbol
 __copy_symbol_data:
@@ -30,6 +44,8 @@ _scroll_init:
 	xor a, a
 	ld ( scroll_symbol_index ), a
 	ld ( scroll_symbol_index  + 1 ), a
+	ld ( scroll_delay ), a
+	ld ( scroll_delay + 1 ), a
 	ld a, 8
 	ld ( scroll_scroll_count ) , a
 	ld a, ( iy + 0 )
@@ -84,8 +100,17 @@ _scroll_line:
 ; iy - text with 0 as terminal symbol
 ; b - line count
 _scroll_all_lines:
+	push bc
 	push de
-	push hl
+	ld de, ( scroll_delay )
+	ld a, d
+	or e
+	jr z,_scroll_all_lines_continue
+	dec de
+	ld ( scroll_delay ), de
+	jr _scroll_all_lines_exit
+
+ _scroll_all_lines_continue:
 	ld de, scroll_first_symbol
 	ld c, b
 	ld b, 8
@@ -116,11 +141,18 @@ _scroll_all_lines:
 	add hl, de
 	ld a, ( hl )
 	or a, a
-	jr nz, _scroll_all_lines_next
+	jr nz, _scroll_all_lines_delay
 	ld de, 0
 	ld ( scroll_symbol_index ), de
 	ld a, ( iy + 0)
 
+ _scroll_all_lines_delay:
+ 	cp a, 1
+ 	jr nz, _scroll_all_lines_next
+ 	ld de, $SCROLL_DELAY
+ 	ld ( scroll_delay ), de
+ 	ld a, ' ' 	
+ 	
  _scroll_all_lines_next:
 	sub a, ' '
 	call __copy_symbol_data
@@ -129,12 +161,3 @@ _scroll_all_lines:
 	pop de
 	pop bc	
 	ret
-
-scroll_first_symbol:
-	defb 1, 0, 1, 0, 1, 0, 1, 0
-
-scroll_symbol_index:
-	defw 0
-
-scroll_scroll_count:
-	defb 0

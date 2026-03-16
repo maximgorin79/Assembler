@@ -1,10 +1,14 @@
 include "system/keyboard.hasm"
 
+stack_old:
+	equ 0x5b00 + 22
+	
 include "consts.hasm"
 
 	
 	org 49152
-	di		
+	di
+	ld ( stack_old ), sp
 	ld sp, 0xffff
 	call init
 	ld hl, bk_screen_addr
@@ -18,7 +22,7 @@ include "consts.hasm"
 	;ld a, $_BK_RED | $_WHITE ;bk color
 	call _draw_main_window
 
-	call _init_items
+	call _init_ui
 	ld a, 36
 	ld ( items_count ), a
 	ld ix, font_addr
@@ -120,15 +124,29 @@ draw_loading:
 	call _draw_alert
 	ld hl, bk_screen_addr
 	call screen_swap
-lll: nop
-	jr lll
+	
+await:	
+	ld bc, $KB_PORT | ($R_HJKLENT << 8)
+	in a, ( c )
+	bit 0, a ; key 'Enter'
+	jr nz, await
+	ld sp, ( stack_old )
+	ei
 	ret
 	
 scroll_text:
-	defb "Hi guys!!! Glad to present you a new ROM which"
+	defb " Written by Maxx in 2026  \1"
+	defb "               Hi guys!!!"
+	defb " Glad to represent you a new ROM which"
 	defb " has 1 Mb size, where you can find all your favorite"
-	defb " games from childhood on the old respected zx speccy!"
-	defb " Loader written by Maxx in 2026.                      ", 0
+	defb " games directly from childhood on the old respected ZX Speccy!"
+	defb " Greetings to all comrades who likes zx spectrum and special for"
+	defb " Joker, CRackOWN, Serega. "
+	defb " Use Interface II for navigation (key '6' - left, hop in"
+	defb " the first panel, key '7' - right, hop in the second panel, key '9' - up, select"
+	defb " the next item, key '8' - select the previous item, key '0' - fire or select)", 0
+	
+	
 
 include "system/console.asm"
 

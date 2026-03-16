@@ -2,7 +2,51 @@
 ; The general rule: passed arguments in procedures will not restore after execution 
 ; and A register as well
 
+include "win.hasm"
+
 include "../text/string.asm"
+
+item_top:
+	equ 0x5b00 + 13
+
+items_current_row_in_column:
+	equ 0x5b00 + 14
+
+items_current_row:
+	equ 0x5b00 + 15
+	
+items_window_size:
+	equ 0x5b00 + 16
+
+items_offset:
+	equ 0x5b00 + 17
+
+item_selected:
+	equ 0x5b00 + 18
+
+item_prev_selected:
+	equ 0x5b00 + 19
+
+items_repaint:
+	equ 0x5b00 + 20
+	
+items_count:
+	equ 0x5b00 + 21
+
+; bc - height, width
+_calc_center:
+	ld a, $DESKTOP_WIDTH
+	sub a, c
+	rrca
+	and a, 0b01111111
+	ld e, a
+	ld a, $DESKTOP_HEIGHT
+	sub a, b
+	rrca
+	and a, 0b01111111
+	ld d, a
+	ret
+
 
 ; de - y, x
 ; hl - screen addr
@@ -266,8 +310,9 @@ _draw_frame_l6:
  	sub a, b
  	rrca
  	and a, 0b01111111
- 	add a, e
- 	ld e, a 	
+ 	add a, e 	
+ 	ld e, a
+ 	inc e
  	call _calc_point_addr 	
  	call _draw_string
 
@@ -372,9 +417,7 @@ _draw_separator:
 ; hl - screen address
 ; bc - height, width
 ; ix - font
-; a - color
-_draw_window:
-	ex af, af'
+_draw_alert:	
 	ld a, c
 	cp a, 2 ; width less 2
 	ret c
@@ -387,7 +430,9 @@ _draw_window:
 	ld a, d
 	cp a, 24
 	ret nc
-	ex af, af'
+	push ix
+	push iy
+	ld iy, 0
 	push hl
 	push de
 	push bc	
@@ -395,14 +440,32 @@ _draw_window:
 	pop bc
 	pop de
 	pop hl
+	pop iy
+	pop ix	
 	push hl
 	push de
 	push bc
-	ld a, ( win_color )
+	ld a, ( alert_color )
 	call _draw_bk_bar	
 	pop bc
 	pop de
 	pop hl
+	
+	push hl
+	push de
+	inc e
+	inc d	
+	push bc
+	ld b, c
+	dec b
+	dec b
+	ld a, ( alert_msg_color )
+	ld c, a
+	call _draw_item
+	pop bc
+	pop de
+	pop hl	
+	
 	push hl
 	push de
 	push bc	
@@ -411,6 +474,12 @@ _draw_window:
 	pop de	
 	pop hl		
 	ret
+
+alert_color:
+	defb $_BK_RED | $_BLACK ;bk color
+	
+alert_msg_color:
+	defb $_BK_RED | $_WHITE ;message color
 
 _draw_main_window:
 	ex af, af'
@@ -451,7 +520,7 @@ _draw_main_window:
 	push hl
 	push de
 	push bc
-	ld a, ( win_color )
+	ld a, ( main_win_color )
 	call _draw_bk_bar	
 	pop bc
 	pop de
@@ -483,7 +552,7 @@ _draw_main_window:
 	pop hl
 	ret
 	
-win_color:
+main_win_color:
 	defb $_BK_BLUE | $_GREEN ;bk color
 
 cli_color:
@@ -524,7 +593,7 @@ _draw_item_l1:
 	call _draw_bk_bar
 	ret
 
-_init_items:
+_init_ui:
 	xor a, a
 	ld ( item_top ), a
 	ld ( items_current_row_in_column ), a
@@ -533,9 +602,11 @@ _init_items:
 	ld ( items_offset ), a
 	ld ( item_selected ), a
 	ld ( item_prev_selected ), a	
-	ld ( items_count ), a
+	ld ( items_count ), a	
 	ld a, 1
 	ld ( items_repaint ), a
+	
+	
 	ret
 
 
@@ -671,33 +742,6 @@ _draw_all_items:
 	call _draw_items
 	ret
 
-item_top:
-	defb 0
-
-items_current_row_in_column:
-	defb 0
-
-items_current_row:
-	defb 0
-	
-items_window_size:
-	defb 0
-
-items_offset:
-	defb 0
-
-item_selected:
-	defb 0
-
-item_prev_selected:
-	defb 0
-
-items_repaint:
-	defb 1
-	
-items_count:
-	defb 0
-
 item_color:
 	defb $_BK_BLUE | $_WHITE
 
@@ -777,11 +821,18 @@ _items_navigate_left:
 	pop hl
 	ret
  _items_navigate_left_l1:
+ 	xor a, a 	
+ 	ld ( hl ), a	
+ 	ld hl, items_offset
+ 	ld a, ( hl )
+ 	or a, a
+ 	jr z, _items_navigate_left_exit
  	xor a, a
  	ld ( hl ), a
- 	ld ( items_offset ), a
  	ld a, 1
  	ld ( items_repaint), a
+ 	
+ _items_navigate_left_exit:
 	pop hl
 	ret
 	
@@ -822,8 +873,30 @@ _items_navigate_right:
  	ld b, a
  	ld a, ( items_count )
  	sub b
+ 	cp a, ( hl )
+ 	jr z, _items_navigate_right_exit
  	ld ( hl ), a
  	ld a, 1
  	ld ( items_repaint ), a
+ 	
+ _items_navigate_right_exit: 	
  	pop hl 
+	ret
+
+; hl - screen address
+; a - color
+_clear_desktop:
+	ex af, af'
+	_ld de, hl
+	inc de
+	ld bc, $_SCREEN_SIZE - 1
+	xor a, a
+	ld ( hl ), a
+	ldir
+	inc hl
+	inc de
+	ex af, af'	
+	ld ( hl ), a
+	ld bc, $_ATTR_SIZE - 1
+	ldir
 	ret
