@@ -21,6 +21,10 @@ public final class Output {
 
     }
 
+    public static void reset() {
+        warningCount = 0;
+    }
+
     public static void println(String s) {
         System.out.println(s);
     }

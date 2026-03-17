@@ -48,9 +48,9 @@ public final class Messages {
 
     public static final String VALUE_OUT_OF_RANGE = "valueOutOfRange";
 
-    public static final String ADDRESS_EXCEPTED = "addressExcepted";
+    public static final String ADDRESS_EXPECTED = "addressExpected";
 
-    public static final String VALUE_EXCEPTED = "valueExcepted";
+    public static final String VALUE_EXPECTED = "valueExpected";
 
     public static final String FILE_PATH_EXCEPTED = "filePathExcepted";
 
@@ -125,6 +125,8 @@ public final class Messages {
     public static final String POSITIVE_VALUE_REQUIRED = "positive_value_required";
 
     public static final String DATA_TOO_LONG = "data_too_long";
+
+    public static final String EXPRESSION_EXPECTED = "expression_expected";
 
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("asm.i18n.Messages");
 

@@ -65,7 +65,7 @@ public class DbCommandCompiler implements CommandCompiler {
         if (nextLexem == null) {
           throw new CompilerException(compilerApi.getFd(), compilerApi.getLineNumber(),
               Messages
-                  .getMessage(Messages.VALUE_EXCEPTED));
+                  .getMessage(Messages.VALUE_EXPECTED));
         }
         if (nextLexem.getType() == LexemType.STRING) {
           IOUtils.writeString(baos, nextLexem.getValue());
@@ -73,7 +73,8 @@ public class DbCommandCompiler implements CommandCompiler {
         } else {
           if (nextLexem.getType() == LexemType.CHAR || nextLexem.getType() == LexemType.DECIMAL ||
               nextLexem.getType() == LexemType.OCTAL || nextLexem.getType() == LexemType.HEXADECIMAL ||
-              nextLexem.getType() == LexemType.BINARY || nextLexem.getType() == LexemType.VARIABLE) {
+              nextLexem.getType() == LexemType.BINARY || nextLexem.getType() == LexemType.VARIABLE ||
+              nextLexem.getType() == LexemType.IDENTIFIER) {
             final Expression expression = new Expression(nextLexem.getFd(), iterator,
                 namespaceApi);
             final Expression.Result result = expression.evaluate(nextLexem);

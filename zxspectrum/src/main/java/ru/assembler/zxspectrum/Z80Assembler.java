@@ -381,6 +381,7 @@ public class Z80Assembler extends AbstractNamespaceApi {
     }
 
     public static void main(final String[] args) {
+        Output.reset();
         final Z80AssemblerSettings settings = loadSettings();
         final Options options = createOptions();
         final List<FileDescriptor> fdList = setCli(settings, args, options);

@@ -42,23 +42,25 @@ public class PrintCommandCompiler implements CommandCompiler {
         nextLexem = iterator.hasNext() ? iterator.next() : null;
         if (nextLexem == null) {
             throw new CompilerException(compilerApi.getFd(), compilerApi.getLineNumber(), Messages
-                    .getMessage(Messages.FILE_PATH_EXCEPTED));
-        }
-        while (true) {
-            if (nextLexem.getType() == LexemType.STRING) {
-                print(nextLexem.getValue());
-            } else {
-                final Expression expression = new Expression(compilerApi.getFd(), iterator, namespaceApi);
-                final Expression.Result result = expression.evaluate(nextLexem);
-                if (result.isUndefined()) {
-                    throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber()
+                .getMessage(Messages.EXPRESSION_EXPECTED));
+        } else {
+            while (true) {
+                if (nextLexem.getType() == LexemType.STRING) {
+                    print(nextLexem.getValue());
+                } else {
+                    final Expression expression = new Expression(compilerApi.getFd(), iterator,
+                        namespaceApi);
+                    final Expression.Result result = expression.evaluate(nextLexem);
+                    if (result.isUndefined()) {
+                        throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber()
                             , Messages.getMessage(Messages.CONSTANT_VALUE_REQUIRED));
+                    }
+                    print(result.getValue());
                 }
-                print(result.getValue());
-            }
-            nextLexem = iterator.hasNext() ? iterator.next() : null;
-            if (nextLexem == null) {
-                break;
+                nextLexem = iterator.hasNext() ? iterator.next() : null;
+                if (nextLexem == null) {
+                    break;
+                }
             }
         }
         return new byte[0];

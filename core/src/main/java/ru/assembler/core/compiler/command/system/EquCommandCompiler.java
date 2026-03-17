@@ -52,7 +52,7 @@ public class EquCommandCompiler implements CommandCompiler {
       nextLexem = iterator.next();
     } else {
       throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber(), Messages
-          .getMessage(Messages.ADDRESS_EXCEPTED));
+          .getMessage(Messages.ADDRESS_EXPECTED));
     }
     final Expression expression = new Expression(compilerApi.getFd(), iterator, namespaceApi);
     final Expression.Result result = expression.evaluate(nextLexem);

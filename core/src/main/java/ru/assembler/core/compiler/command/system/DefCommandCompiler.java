@@ -58,7 +58,7 @@ public class DefCommandCompiler implements CommandCompiler {
     String name = nextLexem.getValue();
     if (!iterator.hasNext()) {
       throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber(), Messages
-          .getMessage(Messages.VALUE_EXCEPTED));
+          .getMessage(Messages.VALUE_EXPECTED));
     }
     final Expression expression = new Expression(nextLexem.getFd(), iterator, namespaceApi);
     nextLexem = iterator.next();

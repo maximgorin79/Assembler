@@ -62,11 +62,12 @@ public class DwCommandCompiler implements CommandCompiler {
       while (true) {
         if (nextLexem == null) {
           throw new CompilerException(compilerApi.getFd(), compilerApi.getLineNumber(),
-              Messages.getMessage(Messages.VALUE_EXCEPTED));
+              Messages.getMessage(Messages.VALUE_EXPECTED));
         }
         if (nextLexem.getType() == LexemType.CHAR || nextLexem.getType() == LexemType.DECIMAL ||
             nextLexem.getType() == LexemType.OCTAL || nextLexem.getType() == LexemType.HEXADECIMAL ||
-            nextLexem.getType() == LexemType.BINARY || nextLexem.getType() == LexemType.VARIABLE) {
+            nextLexem.getType() == LexemType.BINARY || nextLexem.getType() == LexemType.VARIABLE ||
+            nextLexem.getType() == LexemType.IDENTIFIER) {
           final Expression expression = new Expression(compilerApi.getFd(), iterator,
               namespaceApi);
           final Expression.Result result = expression.evaluate(nextLexem);

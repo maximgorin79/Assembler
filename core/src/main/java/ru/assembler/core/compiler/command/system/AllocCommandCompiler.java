@@ -11,7 +11,6 @@ import ru.assembler.core.error.text.Messages;
 import ru.assembler.core.lexem.Lexem;
 import ru.assembler.core.lexem.LexemType;
 import ru.assembler.core.ns.NamespaceApi;
-import ru.assembler.core.settings.SettingsApi;
 import ru.assembler.core.syntax.Expression;
 import ru.assembler.core.syntax.LexemSequence;
 import ru.assembler.core.util.RepeatableIterator;
@@ -54,7 +53,7 @@ public class AllocCommandCompiler implements CommandCompiler {
     while (true) {
       if (nextLexem == null) {
         throw new CompilerException(compilerApi.getFd(), compilerApi.getLineNumber(),
-            Messages.getMessage(Messages.VALUE_EXCEPTED));
+            Messages.getMessage(Messages.VALUE_EXPECTED));
       }
       if (nextLexem.getType() == LexemType.CHAR || nextLexem.getType() == LexemType.DECIMAL ||
           nextLexem.getType() == LexemType.OCTAL || nextLexem.getType() == LexemType.HEXADECIMAL ||

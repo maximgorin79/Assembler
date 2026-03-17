@@ -50,7 +50,7 @@ public class OrgCommandCompiler implements CommandCompiler {
     }
     if (!iterator.hasNext()) {
       throw new CompilerException(nextLexem.getFd(), nextLexem.getLineNumber(), Messages
-          .getMessage(Messages.ADDRESS_EXCEPTED));
+          .getMessage(Messages.ADDRESS_EXPECTED));
     }
     nextLexem = iterator.next();
     Expression expression = new Expression(compilerApi.getFd(), iterator, namespaceApi);
