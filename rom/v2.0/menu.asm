@@ -23,7 +23,7 @@ include "consts.hasm"
 	call _draw_main_window
 
 	call _init_ui
-	ld a, 36
+	ld a, 39
 	ld ( items_count ), a
 	ld ix, font_addr
 	ld iy, scroll_text
@@ -133,20 +133,6 @@ await:
 	ld sp, ( stack_old )
 	ei
 	ret
-	
-scroll_text:
-	defb " Written by Maxx in 2026  \1"
-	defb "               Hi guys!!!"
-	defb " Glad to represent you a new ROM which"
-	defb " has 1 Mb size, where you can find all your favorite"
-	defb " games directly from childhood on the old respected ZX Speccy!"
-	defb " Greetings to all comrades who likes zx spectrum and special for"
-	defb " Joker, CRackOWN, Serega. "
-	defb " Use Interface II for navigation (key '6' - left, hop in"
-	defb " the first panel, key '7' - right, hop in the second panel, key '9' - up, select"
-	defb " the next item, key '8' - select the previous item, key '0' - fire or select)", 0
-	
-	
 
 include "system/console.asm"
 
@@ -156,17 +142,18 @@ include "system/screen.asm"
 
 include "ui/scroll.asm"
 
-loading_addr:
-	defb "Loading...", 0
+scroll_text:
+	include "text.asm"
 
 title_addr:
-	defb "Best of CRackOWN", 0
+	include "title.asm"
+
+loading_addr:
+	defb "Loading...\0"	
 
 font_addr:
 	resource "res/font.ch8"
 
-loader_addr:
-	resource "res/embedded/loader48k1.bin"
 	
 items_addr:
-	include "bc01items.asm"
+	include "bc01items.asm"	
