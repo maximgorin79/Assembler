@@ -1,3 +1,5 @@
+; Author Maxim Gorin (c) 2026
+
 def SCROLL_DELAY	256
 
 scroll_first_symbol:

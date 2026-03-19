@@ -1,3 +1,5 @@
+; Author Maxim Gorin (c) 2026
+
 	ld a, 0 ; border color
 	out ( 0xfe ), a
 	ld hl, 0 ; alt hl

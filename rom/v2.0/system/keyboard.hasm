@@ -1,3 +1,5 @@
+; Author Maxim Gorin (c) 2026
+
 def R_CSZXCV	0xFE
 def R_ASDFG	0xFD
 def R_QWERT	0xFB

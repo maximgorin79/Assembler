@@ -1,3 +1,5 @@
+; Author Maxim Gorin (c) 2026
+
 ; Delay
 ; bc - delay in cycles
 delay:

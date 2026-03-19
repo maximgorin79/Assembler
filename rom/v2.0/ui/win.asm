@@ -1,3 +1,5 @@
+; Author Maxim Gorin (c) 2026
+
 ; Show GUI elemenst like window, menu items
 ; The general rule: passed arguments in procedures will not restore after execution 
 ; and A register as well
@@ -671,8 +673,8 @@ _draw_items:
 	ld c, a	
 	ld a, ( items_repaint)
  	or a, a
- 	jr nz, _draw_items_repaint_normal 	
-	ld a, ( item_selected )
+ 	jr nz, _draw_items_repaint_normal
+	ld a, ( item_selected )	
 	cp a, c
 	jr nz, _draw_items_normal
 	ld a, ( item_selected_color )

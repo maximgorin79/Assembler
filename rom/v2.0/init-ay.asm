@@ -1,3 +1,5 @@
+; Author Maxim Gorin (c) 2026
+
 def AY_REG_SELECT_PORT	0xfffd
 
 def AY_REG_VALUE_PORT	0xbffd

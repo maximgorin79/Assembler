@@ -1,3 +1,5 @@
+; Author Maxim Gorin (c) 2026
+
 ; Returns length of string in a register
 ; iy - string, with 0 as terminal symbol
 strlen:

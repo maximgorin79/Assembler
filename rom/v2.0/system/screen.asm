@@ -1,3 +1,5 @@
+; Author Maxim Gorin (c) 2026
+
 ; Swap back screen into real screen without attribute area
 ; hl - address of back screen
 screen_swap:
