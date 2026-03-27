@@ -67,7 +67,7 @@ public class DwCommandCompiler implements CommandCompiler {
         if (nextLexem.getType() == LexemType.CHAR || nextLexem.getType() == LexemType.DECIMAL ||
             nextLexem.getType() == LexemType.OCTAL || nextLexem.getType() == LexemType.HEXADECIMAL ||
             nextLexem.getType() == LexemType.BINARY || nextLexem.getType() == LexemType.VARIABLE ||
-            nextLexem.getType() == LexemType.IDENTIFIER) {
+            nextLexem.getType() == LexemType.IDENTIFIER || nextLexem.getType() == LexemType.OPEN_BRACE) {
           final Expression expression = new Expression(compilerApi.getFd(), iterator,
               namespaceApi);
           final Expression.Result result = expression.evaluate(nextLexem);
