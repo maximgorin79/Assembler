@@ -1,0 +1,12 @@
+; Option count
+def	NUM_OPTIONS	4
+
+def MENU_LEFT	8
+
+def MENU_TOP	9
+
+def TITLE_TOP	2
+
+def TITLE_LEFT	7
+
+def LINE_INTERVAL	2
