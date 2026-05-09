@@ -1,0 +1,8 @@
+output_path=output/bc07s
+rom_size=32768
+page_size=8192
+template_path=res/bc07/template.bin
+menu_path=res/bc07/menu3_01s
+image_path0=res/bc07/arcyesod.z80
+image_path1=res/bc07/nodesyesod.z80
+image_path2=res/bc07/zynaps.z80

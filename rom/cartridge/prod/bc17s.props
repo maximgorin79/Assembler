@@ -1,0 +1,8 @@
+output_path=output/bc17
+rom_size=32768
+page_size=8192
+template_path=res/bc17/template.bin
+menu_path=res/bc17/menu3_01s
+image_path0=res/bc17/paradise.z80
+image_path1=res/bc17/robotcop.z80
+image_path2=res/bc17/sirfred.z80

@@ -1,0 +1,8 @@
+output_path=output/bc03
+rom_size=32768
+page_size=8192
+template_path=res/bc03/template.bin
+menu_path=res/bc03/menu3_01
+image_path0=res/bc03/commando.z80
+image_path1=res/bc03/ikari.z80
+image_path2=res/bc03/solomon.z80

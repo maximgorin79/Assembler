@@ -1,0 +1,1 @@
+java -jar cartridge-1.0-jar-with-dependencies.jar -s %1

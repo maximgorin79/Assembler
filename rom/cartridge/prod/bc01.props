@@ -1,0 +1,9 @@
+output_path=output/bc01
+rom_size=32768
+page_size=8192
+template_path=res/bc01/template.bin
+menu_path=res/bc01/menu4_01
+image_path0=res/bc01/nether.z80
+image_path1=res/bc01/Jack.z80
+image_path2=res/bc01/Panama.z80
+image_path3=res/bc01/cyclone.z80

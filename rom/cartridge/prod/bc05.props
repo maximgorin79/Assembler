@@ -1,0 +1,8 @@
+output_path=output/bc05
+rom_size=32768
+page_size=8192
+template_path=res/bc05/template.bin
+menu_path=res/bc05/menu3_01
+image_path0=res/bc05/Cyber.z80
+image_path1=res/bc05/Cyber2.z80
+image_path2=res/bc05/Zybex.z80

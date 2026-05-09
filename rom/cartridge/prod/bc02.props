@@ -1,0 +1,8 @@
+output_path=output/bc02
+rom_size=32768
+page_size=8192
+template_path=res/bc02/template.bin
+menu_path=res/bc02/menu3_01
+image_path0=res/bc02/venom.z80
+image_path1=res/bc02/dark.z80
+image_path2=res/bc02/bruce.z80

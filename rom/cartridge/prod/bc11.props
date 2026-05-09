@@ -1,0 +1,9 @@
+output_path=output/bc11
+rom_size=32768
+page_size=8192
+template_path=res/bc11/template.bin
+menu_path=res/bc11/menu4_01
+image_path0=res/bc11/bdash3.z80
+image_path1=res/bc11/lrunner2.z80
+image_path2=res/bc11/mminer2.z80
+image_path3=res/bc11/sigma7.z80

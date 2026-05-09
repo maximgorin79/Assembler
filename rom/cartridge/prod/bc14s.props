@@ -1,0 +1,9 @@
+output_path=output/bc14
+rom_size=32768
+page_size=8192
+template_path=res/bc14/template.bin
+menu_path=res/bc14/menu4_01s
+image_path0=res/bc14/batty.z80
+image_path1=res/bc14/bdash2.z80
+image_path2=res/bc14/tetris.z80
+image_path3=res/bc14/tujad.z80
