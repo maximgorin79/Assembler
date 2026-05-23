@@ -7,6 +7,8 @@ def	SELECTED 0xff
 ; Normal flag for text (not selected)
 def	NORMAL 0x00
 
+def	JOYSTICK_DELAY	5000
+
 include "../std/system.asm"
 
 include "../std/keyboard.asm"
@@ -147,7 +149,9 @@ key_listener_l1:
 	call delay
 	jr key_listener_l1	
 	
-key_pressed_9:	
+key_pressed_9:
+	ld bc, $JOYSTICK_DELAY
+	call delay
 	ld a, ( hl )
 	or a, a
 	jr z, key_pressed_9_1
@@ -159,7 +163,9 @@ key_pressed_4:
 	ld a, $NUM_OPTIONS - 1
 	jr key_return
 	
-key_pressed_8:	
+key_pressed_8:
+	ld bc, $JOYSTICK_DELAY
+	call delay
 	ld a, ( hl )
 	cp a, $NUM_OPTIONS - 1
 	jr z, key_pressed_8_1
